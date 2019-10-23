@@ -5,6 +5,7 @@ import PlayingScene from './PlayingScene';
 import titleImg from './../../assets/imageedit_2_7701798241.jpg'
 import GameOverScene from "./GameOverScene";
 import SettingsScene from "./SettingsScene";
+import PauseScene from "./PauseScene";
 
 class MainMenuScene extends Scene {
 
@@ -70,7 +71,8 @@ class MainMenuScene extends Scene {
             case "Enter":
                 
                 if (this.currentOption === 0) {
-                    engine.changeScene(new GameOverScene());
+                    
+                    engine.changeScene(new PlayingScene());
                 }
 
                 if (this.currentOption === 1) {

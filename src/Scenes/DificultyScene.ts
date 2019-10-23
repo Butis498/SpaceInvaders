@@ -3,6 +3,8 @@ import GameContext from '../GameContext';
 import Engine from '../Engine';
 import MainMenuScene from './MainMenuScene';
 import SettingsScene from './SettingsScene';
+import Enemies from '../Enemies';
+import GameObject from '../GameObject';
 
 
 class DIficultyScene extends Scene {
@@ -11,6 +13,7 @@ class DIficultyScene extends Scene {
     private currentOption : number = 0;
     private width = GameContext.context.canvas.width;
     private height = GameContext.context.canvas.height;
+    private enemies = Enemies;
 
     public enter = () =>{
 
@@ -38,6 +41,10 @@ class DIficultyScene extends Scene {
                 if (this.currentOption === 4) {
                     
                     engine.changeScene(new SettingsScene());
+                }else{
+
+                    GameObject.changeVelocity(this.currentOption);
+                    engine.changeScene(new MainMenuScene());
                 }
 
 

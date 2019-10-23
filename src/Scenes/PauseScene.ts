@@ -3,6 +3,7 @@ import GameContext from '../GameContext';
 import Engine from '../Engine';
 import MainMenuScene from './MainMenuScene';
 import SettingsScene from './SettingsScene';
+import PlayingScene from './PlayingScene';
 
 
 class PauseScene extends Scene {
@@ -11,8 +12,15 @@ class PauseScene extends Scene {
     private currentOption : number = 0;
     private width = GameContext.context.canvas.width;
     private height = GameContext.context.canvas.height;
+    private scene:Scene;
+
+    constructor(scene :Scene){
+        super();
+        this.scene = scene;
+    }
 
     public enter = () =>{
+        
 
     }
 
@@ -37,7 +45,13 @@ class PauseScene extends Scene {
 
                 if (this.currentOption === 1) {
                     
+                    delete this.scene;    
                     engine.changeScene(new MainMenuScene());
+                }
+
+                if (this.currentOption === 2) {
+                    
+                    engine.changeScene(this.scene);
                 }
 
 
@@ -90,12 +104,10 @@ class PauseScene extends Scene {
         for (let i = 1; i < this.options.length ; i++) {
 
             if (i === this.currentOption) {
-                context.strokeText(this.options[i],this.width / 2, this.height / 3 + i * 30 + 100)
-
-
+                context.strokeText(this.options[i],this.width / 2, this.height / 3 + i * 30 + 100);
             }
         
-            context.fillText(this.options[i], this.width / 2, this.height / 3 + i * 30 + 100)
+            context.fillText(this.options[i], this.width / 2, this.height / 3 + i * 30 + 100);
 
 
         }

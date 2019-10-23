@@ -120,7 +120,10 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 })({"src/GameContext.ts":[function(require,module,exports) {
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 
 var GameContext =
 /** @class */
@@ -132,7 +135,8 @@ function () {
   return GameContext;
 }();
 
-exports["default"] = GameContext;
+var _default = GameContext;
+exports.default = _default;
 },{}],"src/Time.ts":[function(require,module,exports) {
 "use strict";
 
@@ -181,14 +185,72 @@ function () {
 }();
 
 exports["default"] = Scene;
-},{}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
-module.exports = "/imageedit_2_7701798241.d43096d5.jpg";
-},{}],"assets/10.jpg":[function(require,module,exports) {
-module.exports = "/10.dbe49e2c.jpg";
-},{}],"src/Scenes/GameOverScene.ts":[function(require,module,exports) {
+},{}],"src/GameObject.ts":[function(require,module,exports) {
 "use strict";
 
-var __extends = this && this.__extends || function () {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var GameObject =
+/** @class */
+function () {
+  function GameObject() {
+    this.render = function (n) {};
+
+    this.update = function () {};
+  }
+
+  GameObject.velocityX = 4;
+
+  GameObject.getVelocity = function () {
+    return GameObject.velocityX;
+  };
+
+  GameObject.changeVelocity = function (n) {
+    switch (n) {
+      case 1:
+        GameObject.velocityX = 4;
+        break;
+
+      case 2:
+        GameObject.velocityX = 5;
+        break;
+
+      case 3:
+        GameObject.velocityX = 7;
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  return GameObject;
+}();
+
+var _default = GameObject;
+exports.default = _default;
+},{}],"assets/hola.png":[function(require,module,exports) {
+module.exports = "/hola.4cb37aca.png";
+},{}],"src/Enemies.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _GameObject = _interopRequireDefault(require("./GameObject"));
+
+var _hola = _interopRequireDefault(require("./../assets/hola.png"));
+
+var _GameContext = _interopRequireDefault(require("./GameContext"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
   var _extendStatics = function extendStatics(d, b) {
     _extendStatics = Object.setPrototypeOf || {
       __proto__: []
@@ -214,35 +276,114 @@ var __extends = this && this.__extends || function () {
   };
 }();
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-exports.__esModule = true;
-
-var Scene_1 = __importDefault(require("./../Scene"));
-
-var GameContext_1 = __importDefault(require("./../GameContext"));
-
-var _10_jpg_1 = __importDefault(require("./../../assets/10.jpg"));
-
-var MainMenuScene_1 = __importDefault(require("./MainMenuScene"));
-
-var GameOverScene =
+var Enemies =
 /** @class */
 function (_super) {
-  __extends(GameOverScene, _super);
+  __extends(Enemies, _super);
 
-  function GameOverScene() {
-    var _this = _super !== null && _super.apply(this, arguments) || this;
+  function Enemies() {
+    var _this = _super.call(this) || this;
 
-    _this.options = ["RESTART", "MENU"];
+    _this.imageEnemie = new Image();
+
+    _this.update = function () {
+      var context = _GameContext.default.context;
+
+      if (Enemies.posX + 290 >= context.canvas.width - Enemies.EnemiesWidth) {
+        Enemies.direction = -1;
+        Enemies.posY += 5;
+      }
+
+      if (Enemies.posX <= 10) {
+        Enemies.direction = 1;
+        Enemies.posY += 5;
+      }
+
+      Enemies.posX += 0.002 * Enemies.direction * _GameObject.default.getVelocity();
+    };
+
+    _this.render = function (n) {
+      var context = _GameContext.default.context;
+      var x;
+
+      if (n * Enemies.EnemiesWidth >= 300) {
+        x = Enemies.posX + n * Enemies.EnemiesWidth % 300;
+      } else {
+        x = Enemies.posX + n * Enemies.EnemiesWidth;
+      }
+
+      var y = Enemies.posY + Math.floor(n / (300 / Enemies.EnemiesWidth)) * Enemies.EnemiesHeight;
+      context.drawImage(_this.imageEnemie, x, y, Enemies.EnemiesWidth, Enemies.EnemiesHeight);
+    };
+
+    _this.imageEnemie.src = _hola.default;
+    Enemies.direction = 1;
+    Enemies.posX = 40;
+    Enemies.posY = 40;
+    return _this;
+  }
+
+  Enemies.EnemiesWidth = 20;
+  Enemies.EnemiesHeight = 20;
+  return Enemies;
+}(_GameObject.default);
+
+var _default = Enemies;
+exports.default = _default;
+},{"./GameObject":"src/GameObject.ts","./../assets/hola.png":"assets/hola.png","./GameContext":"src/GameContext.ts"}],"src/Scenes/PauseScene.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _Scene = _interopRequireDefault(require("../Scene"));
+
+var _GameContext = _interopRequireDefault(require("../GameContext"));
+
+var _MainMenuScene = _interopRequireDefault(require("./MainMenuScene"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) {
+        if (b.hasOwnProperty(p)) d[p] = b[p];
+      }
+    };
+
+    return _extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    _extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+var PauseScene =
+/** @class */
+function (_super) {
+  __extends(PauseScene, _super);
+
+  function PauseScene(scene) {
+    var _this = _super.call(this) || this;
+
+    _this.options = ["PAUSE", "MENU", "RESUME"];
     _this.currentOption = 0;
-    _this.width = GameContext_1["default"].context.canvas.width;
-    _this.height = GameContext_1["default"].context.canvas.height;
-    _this.image = new Image();
+    _this.width = _GameContext.default.context.canvas.width;
+    _this.height = _GameContext.default.context.canvas.height;
 
     _this.enter = function () {};
 
@@ -260,7 +401,12 @@ function (_super) {
 
         case "Enter":
           if (_this.currentOption === 1) {
-            engine.changeScene(new MainMenuScene_1["default"]());
+            delete _this.scene;
+            engine.changeScene(new _MainMenuScene.default());
+          }
+
+          if (_this.currentOption === 2) {
+            engine.changeScene(_this.scene);
           }
 
           break;
@@ -275,29 +421,36 @@ function (_super) {
     };
 
     _this.render = function () {
-      _this.image.src = _10_jpg_1["default"];
-      var context = GameContext_1["default"].context;
+      var context = _GameContext.default.context;
       context.save();
       context.beginPath();
       context.fillStyle = "black";
       context.fillRect(0, 0, context.canvas.width, context.canvas.height);
       context.closePath();
       context.restore();
-      context.drawImage(_this.image, -220, -100);
+      context.save();
+      context.beginPath();
+      context.textAlign = "center";
+      context.fillStyle = "red";
+      context.strokeStyle = "red";
+      context.font = "45px STARWARS";
+      context.fillText(_this.options[0], _this.width / 2, _this.height / 3 + 0 * 30 + 50);
+      context.closePath();
+      context.restore();
       context.save();
       context.beginPath();
       context.textAlign = "center";
       context.fillStyle = "white";
+      context.lineWidth = 5;
       context.strokeStyle = "red";
       context.font = "25px STARWARS";
-      context.lineWidth = 5;
 
-      for (var i = 0; i < _this.options.length; i++) {
+      for (var i = 1; i < _this.options.length; i++) {
         if (i === _this.currentOption) {
-          context.strokeText(_this.options[i], _this.width / 2, _this.height / 2 + i * 30 + 130);
+          context.strokeText(_this.options[i], _this.width / 2, _this.height / 3 + i * 30 + 100);
         }
 
-        context.fillText(_this.options[i], _this.width / 2, _this.height / 2 + i * 30 + 130);
+        context.fillText(_this.options[i], _this.width / 2, _this.height / 3 + i * 30 + 100);
       }
 
       context.closePath();
@@ -306,17 +459,34 @@ function (_super) {
 
     _this.update = function () {};
 
+    _this.scene = scene;
     return _this;
   }
 
-  return GameOverScene;
-}(Scene_1["default"]);
+  return PauseScene;
+}(_Scene.default);
 
-exports["default"] = GameOverScene;
-},{"./../Scene":"src/Scene.ts","./../GameContext":"src/GameContext.ts","./../../assets/10.jpg":"assets/10.jpg","./MainMenuScene":"src/Scenes/MainMenuScene.ts"}],"src/Scenes/DificultyScene.ts":[function(require,module,exports) {
+var _default = PauseScene;
+exports.default = _default;
+},{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./MainMenuScene":"src/Scenes/MainMenuScene.ts"}],"src/Scenes/PlayingScene.ts":[function(require,module,exports) {
 "use strict";
 
-var __extends = this && this.__extends || function () {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _Scene = _interopRequireDefault(require("./../Scene"));
+
+var _GameContext = _interopRequireDefault(require("../GameContext"));
+
+var _Enemies = _interopRequireDefault(require("../Enemies"));
+
+var _PauseScene = _interopRequireDefault(require("./PauseScene"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
   var _extendStatics = function extendStatics(d, b) {
     _extendStatics = Object.setPrototypeOf || {
       __proto__: []
@@ -342,19 +512,113 @@ var __extends = this && this.__extends || function () {
   };
 }();
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
+var PlayingScene =
+/** @class */
+function (_super) {
+  __extends(PlayingScene, _super);
+
+  function PlayingScene() {
+    var _this = _super.call(this) || this;
+
+    _this.enemies = [];
+    _this.numberOfEnemies = 105;
+
+    _this.render = function () {
+      var context = _GameContext.default.context;
+      var _a = _GameContext.default.context.canvas,
+          width = _a.width,
+          height = _a.height;
+      context.save();
+      context.beginPath();
+      context.fillStyle = "black";
+      context.fillRect(0, 0, width, height);
+      context.closePath();
+      context.restore();
+
+      for (var index = 0; index < _this.enemies.length; index++) {
+        var element = _this.enemies[index];
+        element.render(index);
+        element.update();
+      }
+    };
+
+    _this.enter = function () {};
+
+    _this.update = function () {};
+
+    _this.keyUpHandler = function (event) {
+      var key = event.key;
+    };
+
+    _this.keyDownHandler = function (event, engine) {
+      var key = event.key;
+
+      if (key === 'p') {
+        engine.changeScene(new _PauseScene.default(_this));
+      }
+    };
+
+    for (var index = 0; index < _this.numberOfEnemies; index++) {
+      _this.enemies.push(new _Enemies.default());
+    }
+
+    return _this;
+  }
+
+  return PlayingScene;
+}(_Scene.default);
+
+var _default = PlayingScene;
+exports.default = _default;
+},{"./../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","../Enemies":"src/Enemies.ts","./PauseScene":"src/Scenes/PauseScene.ts"}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
+module.exports = "/imageedit_2_7701798241.d43096d5.jpg";
+},{}],"src/Scenes/DificultyScene.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _Scene = _interopRequireDefault(require("../Scene"));
+
+var _GameContext = _interopRequireDefault(require("../GameContext"));
+
+var _MainMenuScene = _interopRequireDefault(require("./MainMenuScene"));
+
+var _SettingsScene = _interopRequireDefault(require("./SettingsScene"));
+
+var _Enemies = _interopRequireDefault(require("../Enemies"));
+
+var _GameObject = _interopRequireDefault(require("../GameObject"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) {
+        if (b.hasOwnProperty(p)) d[p] = b[p];
+      }
+    };
+
+    return _extendStatics(d, b);
   };
-};
 
-exports.__esModule = true;
+  return function (d, b) {
+    _extendStatics(d, b);
 
-var Scene_1 = __importDefault(require("../Scene"));
+    function __() {
+      this.constructor = d;
+    }
 
-var GameContext_1 = __importDefault(require("../GameContext"));
-
-var SettingsScene_1 = __importDefault(require("./SettingsScene"));
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
 
 var DIficultyScene =
 /** @class */
@@ -366,8 +630,9 @@ function (_super) {
 
     _this.options = ["DIFICULTY", "EASY", "MEDIUM", "HARD", "BACK"];
     _this.currentOption = 0;
-    _this.width = GameContext_1["default"].context.canvas.width;
-    _this.height = GameContext_1["default"].context.canvas.height;
+    _this.width = _GameContext.default.context.canvas.width;
+    _this.height = _GameContext.default.context.canvas.height;
+    _this.enemies = _Enemies.default;
 
     _this.enter = function () {};
 
@@ -385,7 +650,11 @@ function (_super) {
 
         case "Enter":
           if (_this.currentOption === 4) {
-            engine.changeScene(new SettingsScene_1["default"]());
+            engine.changeScene(new _SettingsScene.default());
+          } else {
+            _GameObject.default.changeVelocity(_this.currentOption);
+
+            engine.changeScene(new _MainMenuScene.default());
           }
 
           break;
@@ -400,7 +669,7 @@ function (_super) {
     };
 
     _this.render = function () {
-      var context = GameContext_1["default"].context;
+      var context = _GameContext.default.context;
       context.save();
       context.beginPath();
       context.fillStyle = "black";
@@ -447,10 +716,11 @@ function (_super) {
   }
 
   return DIficultyScene;
-}(Scene_1["default"]);
+}(_Scene.default);
 
-exports["default"] = DIficultyScene;
-},{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./SettingsScene":"src/Scenes/SettingsScene.ts"}],"src/Scenes/SoundScene.ts":[function(require,module,exports) {
+var _default = DIficultyScene;
+exports.default = _default;
+},{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./MainMenuScene":"src/Scenes/MainMenuScene.ts","./SettingsScene":"src/Scenes/SettingsScene.ts","../Enemies":"src/Enemies.ts","../GameObject":"src/GameObject.ts"}],"src/Scenes/SoundScene.ts":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -734,7 +1004,24 @@ exports["default"] = SettingsScene;
 },{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./MainMenuScene":"src/Scenes/MainMenuScene.ts","./DificultyScene":"src/Scenes/DificultyScene.ts","./SoundScene":"src/Scenes/SoundScene.ts"}],"src/Scenes/MainMenuScene.ts":[function(require,module,exports) {
 "use strict";
 
-var __extends = this && this.__extends || function () {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _Scene = _interopRequireDefault(require("../Scene"));
+
+var _GameContext = _interopRequireDefault(require("../GameContext"));
+
+var _PlayingScene = _interopRequireDefault(require("./PlayingScene"));
+
+var _imageedit_2_ = _interopRequireDefault(require("./../../assets/imageedit_2_7701798241.jpg"));
+
+var _SettingsScene = _interopRequireDefault(require("./SettingsScene"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
   var _extendStatics = function extendStatics(d, b) {
     _extendStatics = Object.setPrototypeOf || {
       __proto__: []
@@ -760,24 +1047,6 @@ var __extends = this && this.__extends || function () {
   };
 }();
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-exports.__esModule = true;
-
-var Scene_1 = __importDefault(require("../Scene"));
-
-var GameContext_1 = __importDefault(require("../GameContext"));
-
-var imageedit_2_7701798241_jpg_1 = __importDefault(require("./../../assets/imageedit_2_7701798241.jpg"));
-
-var GameOverScene_1 = __importDefault(require("./GameOverScene"));
-
-var SettingsScene_1 = __importDefault(require("./SettingsScene"));
-
 var MainMenuScene =
 /** @class */
 function (_super) {
@@ -788,13 +1057,13 @@ function (_super) {
 
     _this.currentOption = 0;
     _this.options = ["PLAY", "SETTINGS"];
-    _this.width = GameContext_1["default"].context.canvas.width;
-    _this.height = GameContext_1["default"].context.canvas.height;
+    _this.width = _GameContext.default.context.canvas.width;
+    _this.height = _GameContext.default.context.canvas.height;
     _this.image = new Image();
 
     _this.render = function () {
-      _this.image.src = imageedit_2_7701798241_jpg_1["default"];
-      var context = GameContext_1["default"].context;
+      _this.image.src = _imageedit_2_.default;
+      var context = _GameContext.default.context;
       context.save();
       context.beginPath();
       context.fillStyle = "black";
@@ -840,11 +1109,11 @@ function (_super) {
 
         case "Enter":
           if (_this.currentOption === 0) {
-            engine.changeScene(new GameOverScene_1["default"]());
+            engine.changeScene(new _PlayingScene.default());
           }
 
           if (_this.currentOption === 1) {
-            engine.changeScene(new SettingsScene_1["default"]());
+            engine.changeScene(new _SettingsScene.default());
           }
 
           break;
@@ -860,25 +1129,25 @@ function (_super) {
   }
 
   return MainMenuScene;
-}(Scene_1["default"]);
+}(_Scene.default);
 
-exports["default"] = MainMenuScene;
-},{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./../../assets/imageedit_2_7701798241.jpg":"assets/imageedit_2_7701798241.jpg","./GameOverScene":"src/Scenes/GameOverScene.ts","./SettingsScene":"src/Scenes/SettingsScene.ts"}],"src/Engine.ts":[function(require,module,exports) {
+var _default = MainMenuScene;
+exports.default = _default;
+},{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./PlayingScene":"src/Scenes/PlayingScene.ts","./../../assets/imageedit_2_7701798241.jpg":"assets/imageedit_2_7701798241.jpg","./SettingsScene":"src/Scenes/SettingsScene.ts"}],"src/Engine.ts":[function(require,module,exports) {
 "use strict";
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 
-exports.__esModule = true;
+var _GameContext = _interopRequireDefault(require("./GameContext"));
 
-var GameContext_1 = __importDefault(require("./GameContext"));
+var _Time = _interopRequireDefault(require("./Time"));
 
-var Time_1 = __importDefault(require("./Time"));
+var _MainMenuScene = _interopRequireDefault(require("./Scenes/MainMenuScene"));
 
-var MainMenuScene_1 = __importDefault(require("./Scenes/MainMenuScene"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Engine =
 /** @class */
@@ -910,7 +1179,7 @@ function () {
 
 
     this.clearScreen = function () {
-      var context = GameContext_1["default"].context;
+      var context = _GameContext.default.context;
       var canvas = context.canvas;
       var width = canvas.width;
       var height = canvas.height;
@@ -923,7 +1192,7 @@ function () {
     };
 
     this.init = function () {
-      _this.curretScene = new MainMenuScene_1["default"]();
+      _this.curretScene = new _MainMenuScene.default();
 
       _this.curretScene.enter();
     }; // Método que se ejecuta en cada frame del juego.
@@ -932,7 +1201,7 @@ function () {
     this.tick = function () {
       _this.clearScreen();
 
-      Time_1["default"].update();
+      _Time.default.update();
 
       _this.curretScene.update();
 
@@ -945,30 +1214,25 @@ function () {
   return Engine;
 }();
 
-exports["default"] = Engine;
+var _default = Engine;
+exports.default = _default;
 },{"./GameContext":"src/GameContext.ts","./Time":"src/Time.ts","./Scenes/MainMenuScene":"src/Scenes/MainMenuScene.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
+var _Engine = _interopRequireDefault(require("./Engine"));
 
-exports.__esModule = true;
+var _GameContext = _interopRequireDefault(require("./GameContext"));
 
-var Engine_1 = __importDefault(require("./Engine"));
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var GameContext_1 = __importDefault(require("./GameContext")); //  Nota: No es necesario escribir código nuevo en este archivo.
-
-
+//  Nota: No es necesario escribir código nuevo en este archivo.
 var canvas = document.getElementById("game-area");
 var context = canvas.getContext("2d");
-GameContext_1["default"].context = context;
-var engine = new Engine_1["default"]();
+_GameContext.default.context = context;
+var engine = new _Engine.default();
 engine.start();
 canvas.addEventListener("keydown", engine.keydownHandler);
-canvas.addEventListener("keyup", engine.keyupHandler);
+canvas.addEventListener("keyup", engine.keyupHandler); //hola
 },{"./Engine":"src/Engine.ts","./GameContext":"src/GameContext.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -997,7 +1261,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "33263" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "36525" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
