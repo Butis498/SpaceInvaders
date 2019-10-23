@@ -5,6 +5,7 @@ import GameObject from '../GameObject';
 import GameContext from '../GameContext';
 import Enemies from '../Enemies';
 import PauseScene from "./PauseScene";
+import index from './../index';
 
 class PlayingScene extends Scene {
 
@@ -18,6 +19,7 @@ class PlayingScene extends Scene {
 
         }
     }
+
 
   
 
@@ -56,7 +58,9 @@ class PlayingScene extends Scene {
 
         if (key === 'p') {
 
-            engine.changeScene(new PauseScene(this));
+            
+            engine.changeScene(new PauseScene(this ,index.getSoundState() ) );
+            index.changeSound(2);
         }
 
     };

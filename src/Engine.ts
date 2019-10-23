@@ -4,8 +4,11 @@ import Scene from "./Scene";
 import PlayingScene from './Scenes/PlayingScene';
 import MainMenuScene from './Scenes/MainMenuScene';
 import PauseScene from "./Scenes/PauseScene";
+import index from './index';
 
 class Engine {
+
+  
 
   private curretScene: Scene = null;
   // Iniciar el motor del juego.

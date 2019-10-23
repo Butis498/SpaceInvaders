@@ -9,7 +9,7 @@ import SoundScene from './SoundScene';
 class SettingsScene extends Scene {
 
     private options  = [ "SETTINGS" , "SOUND" , "DIFICULTY" , "BACK" ];
-    private currentOption : number = 0;
+    private currentOption : number = 1;
     private width = GameContext.context.canvas.width;
     private height = GameContext.context.canvas.height;
 
@@ -24,12 +24,18 @@ class SettingsScene extends Scene {
             case "ArrowUp":
 
                 this.currentOption = (this.currentOption - 1 + this.options.length) % this.options.length;
+                if (this.currentOption === 0) {
+                    this.currentOption =this.options.length - 1;
+                }
 
                 break;
 
             case "ArrowDown":
 
                 this.currentOption = (this.currentOption + 1) % this.options.length;
+                if (this.currentOption === 0) {
+                    this.currentOption ++;
+                }
 
                 break;
             case "Enter":

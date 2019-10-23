@@ -3,12 +3,13 @@ import GameContext from '../GameContext';
 import Engine from '../Engine';
 import MainMenuScene from './MainMenuScene';
 import SettingsScene from './SettingsScene';
+import index from './../index';
 
 
 class SoundScene extends Scene {
 
     private options  = [ "SOUND" , "ON" , "OFF"  , "BACK" ];
-    private currentOption : number = 0;
+    private currentOption : number = 1;
     private width = GameContext.context.canvas.width;
     private height = GameContext.context.canvas.height;
 
@@ -21,14 +22,20 @@ class SoundScene extends Scene {
 
         switch (key) {
             case "ArrowUp":
-
-                this.currentOption = (this.currentOption - 1 + this.options.length) % this.options.length;
+                this.currentOption = (this.currentOption - 1 + this.options.length  ) % this.options.length  ;
+                if (this.currentOption === 0) {
+                    this.currentOption =this.options.length - 1;
+                }
+               
 
                 break;
 
             case "ArrowDown":
+                this.currentOption = (this.currentOption + 1) % (this.options.length  );
+                if (this.currentOption === 0) {
+                    this.currentOption ++;
+                }
 
-                this.currentOption = (this.currentOption + 1) % this.options.length;
 
                 break;
             case "Enter":
@@ -39,6 +46,13 @@ class SoundScene extends Scene {
                     
                     engine.changeScene(new SettingsScene());
                 }
+
+                if (this.currentOption === 2 || this.currentOption === 1) {
+                    index.changeSound(this.currentOption);
+                    engine.changeScene(new SettingsScene());
+                }
+                
+
 
 
                 break;

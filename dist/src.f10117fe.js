@@ -344,6 +344,8 @@ var _GameContext = _interopRequireDefault(require("../GameContext"));
 
 var _MainMenuScene = _interopRequireDefault(require("./MainMenuScene"));
 
+var _index = _interopRequireDefault(require("./../index"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var __extends = void 0 && (void 0).__extends || function () {
@@ -377,11 +379,11 @@ var PauseScene =
 function (_super) {
   __extends(PauseScene, _super);
 
-  function PauseScene(scene) {
+  function PauseScene(scene, sound) {
     var _this = _super.call(this) || this;
 
     _this.options = ["PAUSE", "MENU", "RESUME"];
-    _this.currentOption = 0;
+    _this.currentOption = 1;
     _this.width = _GameContext.default.context.canvas.width;
     _this.height = _GameContext.default.context.canvas.height;
 
@@ -393,19 +395,38 @@ function (_super) {
       switch (key) {
         case "ArrowUp":
           _this.currentOption = (_this.currentOption - 1 + _this.options.length) % _this.options.length;
+
+          if (_this.currentOption === 0) {
+            _this.currentOption = _this.options.length - 1;
+          }
+
           break;
 
         case "ArrowDown":
           _this.currentOption = (_this.currentOption + 1) % _this.options.length;
+
+          if (_this.currentOption === 0) {
+            _this.currentOption++;
+          }
+
           break;
 
         case "Enter":
           if (_this.currentOption === 1) {
             delete _this.scene;
+
+            if (_this.sound) {
+              _index.default.changeSound(1);
+            }
+
             engine.changeScene(new _MainMenuScene.default());
           }
 
           if (_this.currentOption === 2) {
+            if (_this.sound) {
+              _index.default.changeSound(1);
+            }
+
             engine.changeScene(_this.scene);
           }
 
@@ -460,6 +481,7 @@ function (_super) {
     _this.update = function () {};
 
     _this.scene = scene;
+    _this.sound = sound;
     return _this;
   }
 
@@ -468,7 +490,7 @@ function (_super) {
 
 var _default = PauseScene;
 exports.default = _default;
-},{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./MainMenuScene":"src/Scenes/MainMenuScene.ts"}],"src/Scenes/PlayingScene.ts":[function(require,module,exports) {
+},{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./MainMenuScene":"src/Scenes/MainMenuScene.ts","./../index":"src/index.ts"}],"src/Scenes/PlayingScene.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -483,6 +505,8 @@ var _GameContext = _interopRequireDefault(require("../GameContext"));
 var _Enemies = _interopRequireDefault(require("../Enemies"));
 
 var _PauseScene = _interopRequireDefault(require("./PauseScene"));
+
+var _index = _interopRequireDefault(require("./../index"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -535,9 +559,9 @@ function (_super) {
       context.closePath();
       context.restore();
 
-      for (var index = 0; index < _this.enemies.length; index++) {
-        var element = _this.enemies[index];
-        element.render(index);
+      for (var index_1 = 0; index_1 < _this.enemies.length; index_1++) {
+        var element = _this.enemies[index_1];
+        element.render(index_1);
         element.update();
       }
     };
@@ -554,11 +578,13 @@ function (_super) {
       var key = event.key;
 
       if (key === 'p') {
-        engine.changeScene(new _PauseScene.default(_this));
+        engine.changeScene(new _PauseScene.default(_this, _index.default.getSoundState()));
+
+        _index.default.changeSound(2);
       }
     };
 
-    for (var index = 0; index < _this.numberOfEnemies; index++) {
+    for (var index_2 = 0; index_2 < _this.numberOfEnemies; index_2++) {
       _this.enemies.push(new _Enemies.default());
     }
 
@@ -570,7 +596,7 @@ function (_super) {
 
 var _default = PlayingScene;
 exports.default = _default;
-},{"./../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","../Enemies":"src/Enemies.ts","./PauseScene":"src/Scenes/PauseScene.ts"}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
+},{"./../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","../Enemies":"src/Enemies.ts","./PauseScene":"src/Scenes/PauseScene.ts","./../index":"src/index.ts"}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
 module.exports = "/imageedit_2_7701798241.d43096d5.jpg";
 },{}],"src/Scenes/DificultyScene.ts":[function(require,module,exports) {
 "use strict";
@@ -629,7 +655,7 @@ function (_super) {
     var _this = _super !== null && _super.apply(this, arguments) || this;
 
     _this.options = ["DIFICULTY", "EASY", "MEDIUM", "HARD", "BACK"];
-    _this.currentOption = 0;
+    _this.currentOption = 1;
     _this.width = _GameContext.default.context.canvas.width;
     _this.height = _GameContext.default.context.canvas.height;
     _this.enemies = _Enemies.default;
@@ -642,10 +668,20 @@ function (_super) {
       switch (key) {
         case "ArrowUp":
           _this.currentOption = (_this.currentOption - 1 + _this.options.length) % _this.options.length;
+
+          if (_this.currentOption === 0) {
+            _this.currentOption = _this.options.length - 1;
+          }
+
           break;
 
         case "ArrowDown":
           _this.currentOption = (_this.currentOption + 1) % _this.options.length;
+
+          if (_this.currentOption === 0) {
+            _this.currentOption++;
+          }
+
           break;
 
         case "Enter":
@@ -723,7 +759,22 @@ exports.default = _default;
 },{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./MainMenuScene":"src/Scenes/MainMenuScene.ts","./SettingsScene":"src/Scenes/SettingsScene.ts","../Enemies":"src/Enemies.ts","../GameObject":"src/GameObject.ts"}],"src/Scenes/SoundScene.ts":[function(require,module,exports) {
 "use strict";
 
-var __extends = this && this.__extends || function () {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _Scene = _interopRequireDefault(require("../Scene"));
+
+var _GameContext = _interopRequireDefault(require("../GameContext"));
+
+var _SettingsScene = _interopRequireDefault(require("./SettingsScene"));
+
+var _index = _interopRequireDefault(require("./../index"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
   var _extendStatics = function extendStatics(d, b) {
     _extendStatics = Object.setPrototypeOf || {
       __proto__: []
@@ -749,20 +800,6 @@ var __extends = this && this.__extends || function () {
   };
 }();
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-exports.__esModule = true;
-
-var Scene_1 = __importDefault(require("../Scene"));
-
-var GameContext_1 = __importDefault(require("../GameContext"));
-
-var SettingsScene_1 = __importDefault(require("./SettingsScene"));
-
 var SoundScene =
 /** @class */
 function (_super) {
@@ -772,9 +809,9 @@ function (_super) {
     var _this = _super !== null && _super.apply(this, arguments) || this;
 
     _this.options = ["SOUND", "ON", "OFF", "BACK"];
-    _this.currentOption = 0;
-    _this.width = GameContext_1["default"].context.canvas.width;
-    _this.height = GameContext_1["default"].context.canvas.height;
+    _this.currentOption = 1;
+    _this.width = _GameContext.default.context.canvas.width;
+    _this.height = _GameContext.default.context.canvas.height;
 
     _this.enter = function () {};
 
@@ -784,15 +821,31 @@ function (_super) {
       switch (key) {
         case "ArrowUp":
           _this.currentOption = (_this.currentOption - 1 + _this.options.length) % _this.options.length;
+
+          if (_this.currentOption === 0) {
+            _this.currentOption = _this.options.length - 1;
+          }
+
           break;
 
         case "ArrowDown":
           _this.currentOption = (_this.currentOption + 1) % _this.options.length;
+
+          if (_this.currentOption === 0) {
+            _this.currentOption++;
+          }
+
           break;
 
         case "Enter":
           if (_this.currentOption === 3) {
-            engine.changeScene(new SettingsScene_1["default"]());
+            engine.changeScene(new _SettingsScene.default());
+          }
+
+          if (_this.currentOption === 2 || _this.currentOption === 1) {
+            _index.default.changeSound(_this.currentOption);
+
+            engine.changeScene(new _SettingsScene.default());
           }
 
           break;
@@ -807,7 +860,7 @@ function (_super) {
     };
 
     _this.render = function () {
-      var context = GameContext_1["default"].context;
+      var context = _GameContext.default.context;
       context.save();
       context.beginPath();
       context.fillStyle = "black";
@@ -854,13 +907,31 @@ function (_super) {
   }
 
   return SoundScene;
-}(Scene_1["default"]);
+}(_Scene.default);
 
-exports["default"] = SoundScene;
-},{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./SettingsScene":"src/Scenes/SettingsScene.ts"}],"src/Scenes/SettingsScene.ts":[function(require,module,exports) {
+var _default = SoundScene;
+exports.default = _default;
+},{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./SettingsScene":"src/Scenes/SettingsScene.ts","./../index":"src/index.ts"}],"src/Scenes/SettingsScene.ts":[function(require,module,exports) {
 "use strict";
 
-var __extends = this && this.__extends || function () {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _Scene = _interopRequireDefault(require("../Scene"));
+
+var _GameContext = _interopRequireDefault(require("../GameContext"));
+
+var _MainMenuScene = _interopRequireDefault(require("./MainMenuScene"));
+
+var _DificultyScene = _interopRequireDefault(require("./DificultyScene"));
+
+var _SoundScene = _interopRequireDefault(require("./SoundScene"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
   var _extendStatics = function extendStatics(d, b) {
     _extendStatics = Object.setPrototypeOf || {
       __proto__: []
@@ -886,24 +957,6 @@ var __extends = this && this.__extends || function () {
   };
 }();
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-exports.__esModule = true;
-
-var Scene_1 = __importDefault(require("../Scene"));
-
-var GameContext_1 = __importDefault(require("../GameContext"));
-
-var MainMenuScene_1 = __importDefault(require("./MainMenuScene"));
-
-var DificultyScene_1 = __importDefault(require("./DificultyScene"));
-
-var SoundScene_1 = __importDefault(require("./SoundScene"));
-
 var SettingsScene =
 /** @class */
 function (_super) {
@@ -913,9 +966,9 @@ function (_super) {
     var _this = _super !== null && _super.apply(this, arguments) || this;
 
     _this.options = ["SETTINGS", "SOUND", "DIFICULTY", "BACK"];
-    _this.currentOption = 0;
-    _this.width = GameContext_1["default"].context.canvas.width;
-    _this.height = GameContext_1["default"].context.canvas.height;
+    _this.currentOption = 1;
+    _this.width = _GameContext.default.context.canvas.width;
+    _this.height = _GameContext.default.context.canvas.height;
 
     _this.enter = function () {};
 
@@ -925,23 +978,33 @@ function (_super) {
       switch (key) {
         case "ArrowUp":
           _this.currentOption = (_this.currentOption - 1 + _this.options.length) % _this.options.length;
+
+          if (_this.currentOption === 0) {
+            _this.currentOption = _this.options.length - 1;
+          }
+
           break;
 
         case "ArrowDown":
           _this.currentOption = (_this.currentOption + 1) % _this.options.length;
+
+          if (_this.currentOption === 0) {
+            _this.currentOption++;
+          }
+
           break;
 
         case "Enter":
           if (_this.currentOption === 3) {
-            engine.changeScene(new MainMenuScene_1["default"]());
+            engine.changeScene(new _MainMenuScene.default());
           }
 
           if (_this.currentOption === 2) {
-            engine.changeScene(new DificultyScene_1["default"]());
+            engine.changeScene(new _DificultyScene.default());
           }
 
           if (_this.currentOption === 1) {
-            engine.changeScene(new SoundScene_1["default"]());
+            engine.changeScene(new _SoundScene.default());
           }
 
           break;
@@ -956,7 +1019,7 @@ function (_super) {
     };
 
     _this.render = function () {
-      var context = GameContext_1["default"].context;
+      var context = _GameContext.default.context;
       context.save();
       context.beginPath();
       context.fillStyle = "black";
@@ -998,9 +1061,10 @@ function (_super) {
   }
 
   return SettingsScene;
-}(Scene_1["default"]);
+}(_Scene.default);
 
-exports["default"] = SettingsScene;
+var _default = SettingsScene;
+exports.default = _default;
 },{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./MainMenuScene":"src/Scenes/MainMenuScene.ts","./DificultyScene":"src/Scenes/DificultyScene.ts","./SoundScene":"src/Scenes/SoundScene.ts"}],"src/Scenes/MainMenuScene.ts":[function(require,module,exports) {
 "use strict";
 
@@ -1216,24 +1280,62 @@ function () {
 
 var _default = Engine;
 exports.default = _default;
-},{"./GameContext":"src/GameContext.ts","./Time":"src/Time.ts","./Scenes/MainMenuScene":"src/Scenes/MainMenuScene.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"./GameContext":"src/GameContext.ts","./Time":"src/Time.ts","./Scenes/MainMenuScene":"src/Scenes/MainMenuScene.ts"}],"assets/sound.mp3":[function(require,module,exports) {
+module.exports = "/sound.e6fffd27.mp3";
+},{}],"src/index.ts":[function(require,module,exports) {
 "use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 
 var _Engine = _interopRequireDefault(require("./Engine"));
 
 var _GameContext = _interopRequireDefault(require("./GameContext"));
 
+var _sound = _interopRequireDefault(require("./../assets/sound.mp3"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 //  Nota: No es necesario escribir código nuevo en este archivo.
+var sound = true;
+var music = document.createElement("audio");
+music.src = _sound.default;
+music.loop = true;
+
+var changeSound = function changeSound(n) {
+  if (n === 1) {
+    music.play();
+    sound = true;
+  }
+
+  if (n === 2) {
+    music.pause();
+    sound = false;
+  }
+};
+
 var canvas = document.getElementById("game-area");
 var context = canvas.getContext("2d");
 _GameContext.default.context = context;
 var engine = new _Engine.default();
+changeSound(1);
+
+var getSoundState = function getSoundState() {
+  return sound;
+};
+
 engine.start();
 canvas.addEventListener("keydown", engine.keydownHandler);
 canvas.addEventListener("keyup", engine.keyupHandler); //hola
-},{"./Engine":"src/Engine.ts","./GameContext":"src/GameContext.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+
+var _default = {
+  changeSound: changeSound,
+  getSoundState: getSoundState
+};
+exports.default = _default;
+},{"./Engine":"src/Engine.ts","./GameContext":"src/GameContext.ts","./../assets/sound.mp3":"assets/sound.mp3"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1261,7 +1363,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "36525" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35539" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
