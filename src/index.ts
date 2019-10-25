@@ -38,6 +38,7 @@ let getSoundState = () => {
 engine.start();
 canvas.addEventListener("keydown", engine.keydownHandler);
 canvas.addEventListener("keyup", engine.keyupHandler);
+canvas.addEventListener('mousemove' , engine.mouseHandler);
 
 //hola
 

@@ -8,13 +8,17 @@ class Enemies extends GameObject {
     private static EnemiesHeight: number = 20;
     private static posX: number ;
     private static posY: number ;
+    private right :number;
+    private left: number;
+    private up:number;
+    private down:number;
     private imageEnemie = new Image();
 
-    constructor() {
+    constructor(index: number) {
         super();
         this.imageEnemie.src = Enemie1;
         Enemies.direction = 1;
-        Enemies.posX = 40;
+        Enemies.posX = 50;
         Enemies.posY = 40;
     }
 
@@ -34,6 +38,8 @@ class Enemies extends GameObject {
             Enemies.posY += 5;
         }
         Enemies.posX +=0.002 * Enemies.direction * GameObject.getVelocity();
+        this.right = Enemies.posX + Enemies.EnemiesWidth;
+        this.left = Enemies.posX;
         
 
     }
@@ -52,6 +58,8 @@ class Enemies extends GameObject {
         }
 
         let y = Enemies.posY + Math.floor(n/(300/Enemies.EnemiesWidth))* Enemies.EnemiesHeight;
+        this.up = y;
+        this.down = y + Enemies.EnemiesHeight;
 
         context.drawImage(this.imageEnemie, x, y, Enemies.EnemiesWidth, Enemies.EnemiesHeight)
 

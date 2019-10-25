@@ -164,7 +164,10 @@ exports["default"] = Time;
 },{}],"src/Scene.ts":[function(require,module,exports) {
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 
 var Scene =
 /** @class */
@@ -179,12 +182,15 @@ function () {
     this.keyUpHandler = function (event) {};
 
     this.keyDownHandler = function (event, engine) {};
+
+    this.mouseHandler = function (event) {};
   }
 
   return Scene;
 }();
 
-exports["default"] = Scene;
+var _default = Scene;
+exports.default = _default;
 },{}],"src/GameObject.ts":[function(require,module,exports) {
 "use strict";
 
@@ -281,7 +287,7 @@ var Enemies =
 function (_super) {
   __extends(Enemies, _super);
 
-  function Enemies() {
+  function Enemies(index) {
     var _this = _super.call(this) || this;
 
     _this.imageEnemie = new Image();
@@ -300,6 +306,8 @@ function (_super) {
       }
 
       Enemies.posX += 0.002 * Enemies.direction * _GameObject.default.getVelocity();
+      _this.right = Enemies.posX + Enemies.EnemiesWidth;
+      _this.left = Enemies.posX;
     };
 
     _this.render = function (n) {
@@ -313,12 +321,14 @@ function (_super) {
       }
 
       var y = Enemies.posY + Math.floor(n / (300 / Enemies.EnemiesWidth)) * Enemies.EnemiesHeight;
+      _this.up = y;
+      _this.down = y + Enemies.EnemiesHeight;
       context.drawImage(_this.imageEnemie, x, y, Enemies.EnemiesWidth, Enemies.EnemiesHeight);
     };
 
     _this.imageEnemie.src = _hola.default;
     Enemies.direction = 1;
-    Enemies.posX = 40;
+    Enemies.posX = 50;
     Enemies.posY = 40;
     return _this;
   }
@@ -490,7 +500,74 @@ function (_super) {
 
 var _default = PauseScene;
 exports.default = _default;
-},{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./MainMenuScene":"src/Scenes/MainMenuScene.ts","./../index":"src/index.ts"}],"src/Scenes/PlayingScene.ts":[function(require,module,exports) {
+},{"../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","./MainMenuScene":"src/Scenes/MainMenuScene.ts","./../index":"src/index.ts"}],"assets/ship3.png":[function(require,module,exports) {
+module.exports = "/ship3.97d52671.png";
+},{}],"src/Scenes/Player.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _ship = _interopRequireDefault(require("./../../assets/ship3.png"));
+
+var _GameContext = _interopRequireDefault(require("./../GameContext"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var sWidth = 50;
+var sHeight = 50;
+var posY = 400 * 0.75;
+
+var Player =
+/** @class */
+function () {
+  function Player() {
+    var _this = this;
+
+    this.posX = 0;
+    this.speed = 200;
+    this.characterImage = new Image();
+
+    this.update = function () {};
+
+    this.render = function () {
+      var context = _GameContext.default.context;
+      context.save();
+      context.beginPath();
+      context.drawImage(_this.characterImage, _this.posX, posY, sWidth, sHeight);
+      context.closePath();
+      context.restore();
+    };
+
+    this.characterImage.src = _ship.default;
+    var context = _GameContext.default.context;
+    var _a = context.canvas,
+        width = _a.width,
+        height = _a.height;
+    this.posX = (width - sWidth) / 2;
+  }
+
+  Player.prototype.moving = function (event) {
+    var xOffset = event.offsetX;
+    this.posX = xOffset - sWidth / 2;
+  };
+
+  Player.prototype.getPosition = function () {
+    return this.posX;
+  };
+
+  Player.prototype.getWidth = function () {
+    return sWidth;
+  };
+
+  return Player;
+}();
+
+var _default = Player;
+exports.default = _default;
+},{"./../../assets/ship3.png":"assets/ship3.png","./../GameContext":"src/GameContext.ts"}],"src/Scenes/PlayingScene.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -507,6 +584,8 @@ var _Enemies = _interopRequireDefault(require("../Enemies"));
 var _PauseScene = _interopRequireDefault(require("./PauseScene"));
 
 var _index = _interopRequireDefault(require("./../index"));
+
+var _Player = _interopRequireDefault(require("./Player"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -546,6 +625,7 @@ function (_super) {
 
     _this.enemies = [];
     _this.numberOfEnemies = 105;
+    _this.player = null;
 
     _this.render = function () {
       var context = _GameContext.default.context;
@@ -564,11 +644,15 @@ function (_super) {
         element.render(index_1);
         element.update();
       }
+
+      _this.player.render();
     };
 
     _this.enter = function () {};
 
-    _this.update = function () {};
+    _this.update = function () {
+      _this.player.update();
+    };
 
     _this.keyUpHandler = function (event) {
       var key = event.key;
@@ -584,10 +668,15 @@ function (_super) {
       }
     };
 
+    _this.mouseHandler = function (event) {
+      _this.player.moving(event);
+    };
+
     for (var index_2 = 0; index_2 < _this.numberOfEnemies; index_2++) {
-      _this.enemies.push(new _Enemies.default());
+      _this.enemies.push(new _Enemies.default(index_2));
     }
 
+    _this.player = new _Player.default();
     return _this;
   }
 
@@ -596,7 +685,7 @@ function (_super) {
 
 var _default = PlayingScene;
 exports.default = _default;
-},{"./../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","../Enemies":"src/Enemies.ts","./PauseScene":"src/Scenes/PauseScene.ts","./../index":"src/index.ts"}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
+},{"./../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","../Enemies":"src/Enemies.ts","./PauseScene":"src/Scenes/PauseScene.ts","./../index":"src/index.ts","./Player":"src/Scenes/Player.ts"}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
 module.exports = "/imageedit_2_7701798241.d43096d5.jpg";
 },{}],"src/Scenes/DificultyScene.ts":[function(require,module,exports) {
 "use strict";
@@ -1273,6 +1362,10 @@ function () {
 
       requestAnimationFrame(_this.tick);
     };
+
+    this.mouseHandler = function (event) {
+      _this.curretScene.mouseHandler(event);
+    };
   }
 
   return Engine;
@@ -1328,7 +1421,8 @@ var getSoundState = function getSoundState() {
 
 engine.start();
 canvas.addEventListener("keydown", engine.keydownHandler);
-canvas.addEventListener("keyup", engine.keyupHandler); //hola
+canvas.addEventListener("keyup", engine.keyupHandler);
+canvas.addEventListener('mousemove', engine.mouseHandler); //hola
 
 var _default = {
   changeSound: changeSound,
@@ -1363,7 +1457,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35539" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34879" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

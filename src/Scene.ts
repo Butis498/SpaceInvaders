@@ -9,6 +9,10 @@ abstract class Scene {
         
     };
 
+    public  mouseHandler = (event:MouseEvent) => {
+
+    }
+
 
 }
 

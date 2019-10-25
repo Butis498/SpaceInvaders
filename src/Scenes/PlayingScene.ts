@@ -6,18 +6,22 @@ import GameContext from '../GameContext';
 import Enemies from '../Enemies';
 import PauseScene from "./PauseScene";
 import index from './../index';
+import Player from './Player';
 
 class PlayingScene extends Scene {
 
     private enemies: Enemies[] = [];
     private numberOfEnemies: number = 105;
+    private player : Player = null;
 
     constructor() {
         super();
         for (let index = 0; index < this.numberOfEnemies; index++) {
-            this.enemies.push(new Enemies());
+            this.enemies.push(new Enemies(index));
 
         }
+
+        this.player = new Player();
     }
 
 
@@ -43,11 +47,16 @@ class PlayingScene extends Scene {
         }
 
 
+        this.player.render();
+        
+
+
 
     };
     public enter = () => {
     };
     public update = () => {
+        this.player.update();
     };
     public keyUpHandler = (event: KeyboardEvent) => {
         const { key } = event;
@@ -64,6 +73,11 @@ class PlayingScene extends Scene {
         }
 
     };
+
+    public mouseHandler = (event: MouseEvent) => {
+
+        this.player.moving(event);
+    }
 
 }
 

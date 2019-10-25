@@ -61,6 +61,10 @@ class Engine {
 
     requestAnimationFrame(this.tick);
   };
+
+  public mouseHandler = (event: MouseEvent) =>{
+      this.curretScene.mouseHandler(event);
+  }
 }
 
 export default Engine;
