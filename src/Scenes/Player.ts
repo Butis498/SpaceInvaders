@@ -16,6 +16,8 @@ public moving(event:MouseEvent) {
   var xOffset = event.offsetX;
   this.posX = xOffset - sWidth / 2;
 }
+
+
   public getPosition() {
     return this.posX;
   }

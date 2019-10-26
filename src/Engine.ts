@@ -65,6 +65,10 @@ class Engine {
   public mouseHandler = (event: MouseEvent) =>{
       this.curretScene.mouseHandler(event);
   }
+
+  public clickHandler = (event: MouseEvent) => {
+    this.curretScene.clickHandler(event);
+  }
 }
 
 export default Engine;

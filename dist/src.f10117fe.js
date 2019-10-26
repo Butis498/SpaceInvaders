@@ -184,6 +184,8 @@ function () {
     this.keyDownHandler = function (event, engine) {};
 
     this.mouseHandler = function (event) {};
+
+    this.clickHandler = function (event) {};
   }
 
   return Scene;
@@ -205,7 +207,7 @@ function () {
   function GameObject() {
     this.render = function (n) {};
 
-    this.update = function () {};
+    this.update = function (n) {};
   }
 
   GameObject.velocityX = 4;
@@ -292,7 +294,19 @@ function (_super) {
 
     _this.imageEnemie = new Image();
 
-    _this.update = function () {
+    _this.getState = function () {
+      return _this.state;
+    };
+
+    _this.setState = function (b) {
+      _this.state = b;
+    };
+
+    _this.getLimits = function () {
+      return [_this.up, _this.down, _this.right, _this.left];
+    };
+
+    _this.update = function (n) {
       var context = _GameContext.default.context;
 
       if (Enemies.posX + 290 >= context.canvas.width - Enemies.EnemiesWidth) {
@@ -306,30 +320,30 @@ function (_super) {
       }
 
       Enemies.posX += 0.002 * Enemies.direction * _GameObject.default.getVelocity();
-      _this.right = Enemies.posX + Enemies.EnemiesWidth;
-      _this.left = Enemies.posX;
+
+      if (n * Enemies.EnemiesWidth >= 300) {
+        _this.x = Enemies.posX + n * Enemies.EnemiesWidth % 300;
+      } else {
+        _this.x = Enemies.posX + n * Enemies.EnemiesWidth;
+      }
+
+      _this.y = Enemies.posY + Math.floor(n / (300 / Enemies.EnemiesWidth)) * Enemies.EnemiesHeight;
+      _this.up = _this.y;
+      _this.down = _this.y + Enemies.EnemiesHeight;
+      _this.right = _this.x + Enemies.EnemiesWidth;
+      _this.left = _this.x;
     };
 
     _this.render = function (n) {
       var context = _GameContext.default.context;
-      var x;
-
-      if (n * Enemies.EnemiesWidth >= 300) {
-        x = Enemies.posX + n * Enemies.EnemiesWidth % 300;
-      } else {
-        x = Enemies.posX + n * Enemies.EnemiesWidth;
-      }
-
-      var y = Enemies.posY + Math.floor(n / (300 / Enemies.EnemiesWidth)) * Enemies.EnemiesHeight;
-      _this.up = y;
-      _this.down = y + Enemies.EnemiesHeight;
-      context.drawImage(_this.imageEnemie, x, y, Enemies.EnemiesWidth, Enemies.EnemiesHeight);
+      context.drawImage(_this.imageEnemie, _this.x, _this.y, Enemies.EnemiesWidth, Enemies.EnemiesHeight);
     };
 
     _this.imageEnemie.src = _hola.default;
     Enemies.direction = 1;
     Enemies.posX = 50;
     Enemies.posY = 40;
+    _this.state = true;
     return _this;
   }
 
@@ -567,7 +581,65 @@ function () {
 
 var _default = Player;
 exports.default = _default;
-},{"./../../assets/ship3.png":"assets/ship3.png","./../GameContext":"src/GameContext.ts"}],"src/Scenes/PlayingScene.ts":[function(require,module,exports) {
+},{"./../../assets/ship3.png":"assets/ship3.png","./../GameContext":"src/GameContext.ts"}],"src/Bullet.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _GameContext = _interopRequireDefault(require("./GameContext"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Bullet =
+/** @class */
+function () {
+  function Bullet(player) {
+    var _this = this;
+
+    this.width = 5;
+    this.height = 25;
+    this.velocity = -5;
+
+    this.getPosY = function () {
+      return _this.posY;
+    };
+
+    this.posX = player.getPosition() + player.getWidth() / 2;
+    this.posY = 400 * 0.75 + 5;
+    this.up = this.posY;
+    this.down = this.posY + this.height;
+    this.left = this.posX;
+    this.right = this.posX + this.width;
+  }
+
+  Bullet.prototype.getLimits = function () {
+    return [this.up, this.down, this.right, this.left];
+  };
+
+  Bullet.prototype.render = function () {
+    var context = _GameContext.default.context;
+    context.save();
+    context.beginPath();
+    context.fillStyle = "lime";
+    context.fillRect(this.posX, this.posY, this.width, this.height);
+  };
+
+  Bullet.prototype.update = function () {
+    this.posY += this.velocity;
+    this.up = this.posY;
+    this.down = this.posY + this.height;
+    this.right = this.posX + this.width;
+  };
+
+  return Bullet;
+}();
+
+var _default = Bullet;
+exports.default = _default;
+},{"./GameContext":"src/GameContext.ts"}],"src/Scenes/PlayingScene.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -586,6 +658,8 @@ var _PauseScene = _interopRequireDefault(require("./PauseScene"));
 var _index = _interopRequireDefault(require("./../index"));
 
 var _Player = _interopRequireDefault(require("./Player"));
+
+var _Bullet = _interopRequireDefault(require("../Bullet"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -624,8 +698,27 @@ function (_super) {
     var _this = _super.call(this) || this;
 
     _this.enemies = [];
-    _this.numberOfEnemies = 105;
+    _this.numberOfEnemies = 60;
     _this.player = null;
+    _this.bullets = [];
+
+    _this.colicion = function (enemie, bullet) {
+      var bUp = bullet.getLimits()[0];
+      var bDown = bullet.getLimits()[1];
+      var bRight = bullet.getLimits()[2];
+      var bleft = bullet.getLimits()[3];
+      var eUp = enemie.getLimits()[0];
+      var eDown = enemie.getLimits()[1];
+      var eRight = enemie.getLimits()[2];
+      var eLeft = enemie.getLimits()[3]; //console.log(bleft, "<", eRight, "  ", bRight, ">", eLeft, "  ", bUp, " > ", eDown, "  ", bDown, " < ", eUp);
+
+      if (bleft < eRight && bRight > eLeft && bUp < eDown && bDown > eUp) {
+        console.log(true);
+        return true;
+      }
+
+      return false;
+    };
 
     _this.render = function () {
       var context = _GameContext.default.context;
@@ -641,17 +734,53 @@ function (_super) {
 
       for (var index_1 = 0; index_1 < _this.enemies.length; index_1++) {
         var element = _this.enemies[index_1];
-        element.render(index_1);
-        element.update();
+
+        if (element.getState()) {
+          element.render(index_1);
+        }
+
+        element.update(index_1);
       }
 
       _this.player.render();
+
+      for (var index_2 = 0; index_2 < _this.bullets.length; index_2++) {
+        var element = _this.bullets[index_2];
+        element.render();
+      }
     };
 
     _this.enter = function () {};
 
     _this.update = function () {
       _this.player.update();
+
+      for (var index_3 = 0; index_3 < _this.bullets.length; index_3++) {
+        var element = _this.bullets[index_3];
+        element.update();
+      }
+
+      _this.bullets = _this.bullets.filter(function (ele) {
+        if (ele.getPosY() != 0) {
+          return ele;
+        }
+      });
+
+      var _loop_1 = function _loop_1(index_4) {
+        var element = _this.enemies[index_4];
+
+        if (element.getState()) {
+          _this.bullets = _this.bullets.filter(function (bul) {
+            if (!_this.colicion(element, bul)) {
+              return bul;
+            } else element.setState(false);
+          });
+        }
+      };
+
+      for (var index_4 = 0; index_4 < _this.enemies.length; index_4++) {
+        _loop_1(index_4);
+      }
     };
 
     _this.keyUpHandler = function (event) {
@@ -672,8 +801,12 @@ function (_super) {
       _this.player.moving(event);
     };
 
-    for (var index_2 = 0; index_2 < _this.numberOfEnemies; index_2++) {
-      _this.enemies.push(new _Enemies.default(index_2));
+    _this.clickHandler = function (event) {
+      _this.bullets.push(new _Bullet.default(_this.player));
+    };
+
+    for (var index_5 = 0; index_5 < _this.numberOfEnemies; index_5++) {
+      _this.enemies.push(new _Enemies.default(index_5));
     }
 
     _this.player = new _Player.default();
@@ -685,7 +818,7 @@ function (_super) {
 
 var _default = PlayingScene;
 exports.default = _default;
-},{"./../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","../Enemies":"src/Enemies.ts","./PauseScene":"src/Scenes/PauseScene.ts","./../index":"src/index.ts","./Player":"src/Scenes/Player.ts"}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
+},{"./../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","../Enemies":"src/Enemies.ts","./PauseScene":"src/Scenes/PauseScene.ts","./../index":"src/index.ts","./Player":"src/Scenes/Player.ts","../Bullet":"src/Bullet.ts"}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
 module.exports = "/imageedit_2_7701798241.d43096d5.jpg";
 },{}],"src/Scenes/DificultyScene.ts":[function(require,module,exports) {
 "use strict";
@@ -1366,6 +1499,10 @@ function () {
     this.mouseHandler = function (event) {
       _this.curretScene.mouseHandler(event);
     };
+
+    this.clickHandler = function (event) {
+      _this.curretScene.clickHandler(event);
+    };
   }
 
   return Engine;
@@ -1422,7 +1559,8 @@ var getSoundState = function getSoundState() {
 engine.start();
 canvas.addEventListener("keydown", engine.keydownHandler);
 canvas.addEventListener("keyup", engine.keyupHandler);
-canvas.addEventListener('mousemove', engine.mouseHandler); //hola
+canvas.addEventListener('mousemove', engine.mouseHandler);
+canvas.addEventListener('mousedown', engine.clickHandler); //hola
 
 var _default = {
   changeSound: changeSound,
@@ -1457,7 +1595,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34879" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "37775" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

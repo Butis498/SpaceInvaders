@@ -14,7 +14,7 @@ abstract class GameObject {
 
     }
 
-    abstract update = () =>{
+    abstract update = (n: number) =>{
 
     }
     public static changeVelocity = (n: number) => {
