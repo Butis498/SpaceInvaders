@@ -8,6 +8,9 @@ import PauseScene from "./PauseScene";
 import index from './../index';
 import Player from './Player';
 import Bullet from '../Bullet';
+import pew from './../../assets/pew.mp3'
+import { async } from "q";
+import GameOverScene from "./GameOverScene";
 
 class PlayingScene extends Scene {
 
@@ -15,8 +18,9 @@ class PlayingScene extends Scene {
     private numberOfEnemies: number = 60;
     private player: Player = null;
     private bullets: Bullet[] = [];
+    private engine: Engine;
 
-    constructor() {
+    constructor(engine: Engine) {
         super();
         for (let index = 0; index < this.numberOfEnemies; index++) {
             this.enemies.push(new Enemies(index));
@@ -24,6 +28,8 @@ class PlayingScene extends Scene {
         }
 
         this.player = new Player();
+        this.engine = engine
+
     }
 
 
@@ -34,6 +40,39 @@ class PlayingScene extends Scene {
         const bDown = bullet.getLimits()[1];
         const bRight = bullet.getLimits()[2];
         const bleft = bullet.getLimits()[3];
+
+        const eUp = enemie.getLimits()[0];
+        const eDown = enemie.getLimits()[1];
+        const eRight = enemie.getLimits()[2];
+        const eLeft = enemie.getLimits()[3];
+
+
+        //console.log(bleft, "<", eRight, "  ", bRight, ">", eLeft, "  ", bUp, " > ", eDown, "  ", bDown, " < ", eUp);
+
+
+
+
+        if (bleft < eRight && bRight > eLeft && bUp < eDown && bDown > eUp) {
+
+            console.log(true)
+            return true
+
+        }
+
+
+
+
+        return false;
+
+    }
+
+    public colicionPlayer = (enemie: Enemies, player: Player) => {
+
+
+        const bUp = player.getLimits()[0];
+        const bDown = player.getLimits()[1];
+        const bRight = player.getLimits()[2];
+        const bleft = player.getLimits()[3];
 
         const eUp = enemie.getLimits()[0];
         const eDown = enemie.getLimits()[1];
@@ -104,7 +143,9 @@ class PlayingScene extends Scene {
     };
     public enter = () => {
     };
-    public update = () => {
+    public update = async () => {
+        const { context } = GameContext;
+
         this.player.update();
 
         for (let index = 0; index < this.bullets.length; index++) {
@@ -141,9 +182,58 @@ class PlayingScene extends Scene {
 
         }
 
+        for (let index = 0; index < this.enemies.length; index++) {
+            const element = this.enemies[index];
+
+            if (!element.getState()) {
+
+                GameObject.velocityX += 0.002;
+            }
+        }
+        let bool = false;
+
+        for (let index = 0; index < this.enemies.length; index++) {
+            const element = this.enemies[index];
+            let aux = await element.getState()
+
+            if (!aux) {
+                bool = true;
+            } else {
+
+                bool = false
+                break;
+            };
 
 
 
+
+        }
+
+        if (bool) {
+            this.enemies = [];
+            this.numberOfEnemies += 10;
+            GameObject.velocityX = GameObject.lastVelocity;
+            this.bullets = []
+
+            for (let index = 0; index < this.numberOfEnemies; index++) {
+                this.enemies.push(new Enemies(index));
+
+            }
+
+        }
+
+
+        for (let index = 0; index < this.enemies.length; index++) {
+            const element = this.enemies[index];
+
+            if (element.getLimits()[1] >= context.canvas.height || (this.colicionPlayer(element, this.player)&& element.getState())) {
+
+                console.log('hola');
+
+                this.engine.changeScene(new GameOverScene());
+            }
+
+        }
 
 
     };
@@ -170,10 +260,17 @@ class PlayingScene extends Scene {
         this.player.moving(event);
     }
 
-    public clickHandler = (event: MouseEvent) => {
+    public clickHandler = async (event: MouseEvent) => {
+
+        const audio = document.createElement('audio');
+        audio.src = pew;
+        await audio.play();
 
 
         this.bullets.push(new Bullet(this.player));
+
+
+
     }
 
 }

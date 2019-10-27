@@ -72,7 +72,7 @@ class MainMenuScene extends Scene {
                 
                 if (this.currentOption === 0) {
                     
-                    engine.changeScene(new PlayingScene());
+                    engine.changeScene(new PlayingScene(engine));
                 }
 
                 if (this.currentOption === 1) {

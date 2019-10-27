@@ -137,6 +137,8 @@ class PauseScene extends Scene {
 
     public update = () => {
 
+        
+
     }
 }
 

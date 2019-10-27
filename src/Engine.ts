@@ -5,12 +5,14 @@ import PlayingScene from './Scenes/PlayingScene';
 import MainMenuScene from './Scenes/MainMenuScene';
 import PauseScene from "./Scenes/PauseScene";
 import index from './index';
+import pew from './../assets/pew.mp3'
 
 class Engine {
 
   
 
   private curretScene: Scene = null;
+  private sound : Document;
   // Iniciar el motor del juego.
 
  public changeScene = (scene: Scene) =>{
@@ -67,6 +69,7 @@ class Engine {
   }
 
   public clickHandler = (event: MouseEvent) => {
+ 
     this.curretScene.clickHandler(event);
   }
 }

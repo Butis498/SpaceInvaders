@@ -211,6 +211,7 @@ function () {
   }
 
   GameObject.velocityX = 4;
+  GameObject.lastVelocity = 4;
 
   GameObject.getVelocity = function () {
     return GameObject.velocityX;
@@ -220,14 +221,17 @@ function () {
     switch (n) {
       case 1:
         GameObject.velocityX = 4;
+        GameObject.lastVelocity = 4;
         break;
 
       case 2:
-        GameObject.velocityX = 5;
+        GameObject.velocityX = 8;
+        GameObject.lastVelocity = 8;
         break;
 
       case 3:
-        GameObject.velocityX = 7;
+        GameObject.velocityX = 15;
+        GameObject.lastVelocity = 15;
         break;
 
       default:
@@ -544,7 +548,15 @@ function () {
     this.speed = 200;
     this.characterImage = new Image();
 
-    this.update = function () {};
+    this.getLimits = function () {
+      return [_this.up, _this.down, _this.right, _this.left];
+    };
+
+    this.update = function () {
+      _this.down = posY + sHeight;
+      _this.right = _this.posX + sWidth;
+      _this.left = _this.posX;
+    };
 
     this.render = function () {
       var context = _GameContext.default.context;
@@ -561,6 +573,10 @@ function () {
         width = _a.width,
         height = _a.height;
     this.posX = (width - sWidth) / 2;
+    this.up = posY;
+    this.down = posY + sHeight;
+    this.right = this.posX + sWidth;
+    this.left = this.posX;
   }
 
   Player.prototype.moving = function (event) {
@@ -599,7 +615,7 @@ function () {
   function Bullet(player) {
     var _this = this;
 
-    this.width = 5;
+    this.width = 3;
     this.height = 25;
     this.velocity = -5;
 
@@ -608,7 +624,7 @@ function () {
     };
 
     this.posX = player.getPosition() + player.getWidth() / 2;
-    this.posY = 400 * 0.75 + 5;
+    this.posY = 400 * 0.75;
     this.up = this.posY;
     this.down = this.posY + this.height;
     this.left = this.posX;
@@ -639,7 +655,11 @@ function () {
 
 var _default = Bullet;
 exports.default = _default;
-},{"./GameContext":"src/GameContext.ts"}],"src/Scenes/PlayingScene.ts":[function(require,module,exports) {
+},{"./GameContext":"src/GameContext.ts"}],"assets/pew.mp3":[function(require,module,exports) {
+module.exports = "/pew.83a3c0e7.mp3";
+},{}],"assets/10.jpg":[function(require,module,exports) {
+module.exports = "/10.dbe49e2c.jpg";
+},{}],"src/Scenes/GameOverScene.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -649,17 +669,15 @@ exports.default = void 0;
 
 var _Scene = _interopRequireDefault(require("./../Scene"));
 
-var _GameContext = _interopRequireDefault(require("../GameContext"));
+var _GameContext = _interopRequireDefault(require("./../GameContext"));
 
-var _Enemies = _interopRequireDefault(require("../Enemies"));
+var _ = _interopRequireDefault(require("./../../assets/10.jpg"));
 
-var _PauseScene = _interopRequireDefault(require("./PauseScene"));
+var _MainMenuScene = _interopRequireDefault(require("./MainMenuScene"));
 
-var _index = _interopRequireDefault(require("./../index"));
+var _PlayingScene = _interopRequireDefault(require("./PlayingScene"));
 
-var _Player = _interopRequireDefault(require("./Player"));
-
-var _Bullet = _interopRequireDefault(require("../Bullet"));
+var _GameObject = _interopRequireDefault(require("../GameObject"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -689,12 +707,297 @@ var __extends = void 0 && (void 0).__extends || function () {
   };
 }();
 
+var GameOverScene =
+/** @class */
+function (_super) {
+  __extends(GameOverScene, _super);
+
+  function GameOverScene() {
+    var _this = _super !== null && _super.apply(this, arguments) || this;
+
+    _this.options = ["RESTART", "MENU"];
+    _this.currentOption = 0;
+    _this.width = _GameContext.default.context.canvas.width;
+    _this.height = _GameContext.default.context.canvas.height;
+    _this.image = new Image();
+
+    _this.enter = function () {};
+
+    _this.keyDownHandler = function (event, engine) {
+      var key = event.key;
+
+      switch (key) {
+        case "ArrowUp":
+          _this.currentOption = (_this.currentOption - 1 + _this.options.length) % _this.options.length;
+          break;
+
+        case "ArrowDown":
+          _this.currentOption = (_this.currentOption + 1) % _this.options.length;
+          break;
+
+        case "Enter":
+          if (_this.currentOption === 1) {
+            _GameObject.default.velocityX = _GameObject.default.lastVelocity;
+            engine.changeScene(new _MainMenuScene.default());
+          }
+
+          if (_this.currentOption === 0) {
+            _GameObject.default.velocityX = _GameObject.default.lastVelocity;
+            engine.changeScene(new _PlayingScene.default(engine));
+          }
+
+          break;
+
+        default:
+          break;
+      }
+    };
+
+    _this.keyUpHandler = function (event) {
+      var key = event.key;
+    };
+
+    _this.render = function () {
+      _this.image.src = _.default;
+      var context = _GameContext.default.context;
+      context.save();
+      context.beginPath();
+      context.fillStyle = "black";
+      context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+      context.closePath();
+      context.restore();
+      context.drawImage(_this.image, -220, -100);
+      context.save();
+      context.beginPath();
+      context.textAlign = "center";
+      context.fillStyle = "white";
+      context.strokeStyle = "red";
+      context.font = "25px STARWARS";
+      context.lineWidth = 5;
+
+      for (var i = 0; i < _this.options.length; i++) {
+        if (i === _this.currentOption) {
+          context.strokeText(_this.options[i], _this.width / 2, _this.height / 2 + i * 30 + 130);
+        }
+
+        context.fillText(_this.options[i], _this.width / 2, _this.height / 2 + i * 30 + 130);
+      }
+
+      context.closePath();
+      context.restore();
+    };
+
+    _this.update = function () {};
+
+    return _this;
+  }
+
+  return GameOverScene;
+}(_Scene.default);
+
+var _default = GameOverScene;
+exports.default = _default;
+},{"./../Scene":"src/Scene.ts","./../GameContext":"src/GameContext.ts","./../../assets/10.jpg":"assets/10.jpg","./MainMenuScene":"src/Scenes/MainMenuScene.ts","./PlayingScene":"src/Scenes/PlayingScene.ts","../GameObject":"src/GameObject.ts"}],"src/Scenes/PlayingScene.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _Scene = _interopRequireDefault(require("./../Scene"));
+
+var _GameObject = _interopRequireDefault(require("../GameObject"));
+
+var _GameContext = _interopRequireDefault(require("../GameContext"));
+
+var _Enemies = _interopRequireDefault(require("../Enemies"));
+
+var _PauseScene = _interopRequireDefault(require("./PauseScene"));
+
+var _index = _interopRequireDefault(require("./../index"));
+
+var _Player = _interopRequireDefault(require("./Player"));
+
+var _Bullet = _interopRequireDefault(require("../Bullet"));
+
+var _pew = _interopRequireDefault(require("./../../assets/pew.mp3"));
+
+var _GameOverScene = _interopRequireDefault(require("./GameOverScene"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) {
+        if (b.hasOwnProperty(p)) d[p] = b[p];
+      }
+    };
+
+    return _extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    _extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : new P(function (resolve) {
+        resolve(result.value);
+      }).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
+  var _ = {
+    label: 0,
+    sent: function sent() {
+      if (t[0] & 1) throw t[1];
+      return t[1];
+    },
+    trys: [],
+    ops: []
+  },
+      f,
+      y,
+      t,
+      g;
+  return g = {
+    next: verb(0),
+    "throw": verb(1),
+    "return": verb(2)
+  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
+    return this;
+  }), g;
+
+  function verb(n) {
+    return function (v) {
+      return step([n, v]);
+    };
+  }
+
+  function step(op) {
+    if (f) throw new TypeError("Generator is already executing.");
+
+    while (_) {
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+        if (y = 0, t) op = [op[0] & 2, t.value];
+
+        switch (op[0]) {
+          case 0:
+          case 1:
+            t = op;
+            break;
+
+          case 4:
+            _.label++;
+            return {
+              value: op[1],
+              done: false
+            };
+
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+
+          case 7:
+            op = _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+
+              _.ops.push(op);
+
+              break;
+            }
+
+            if (t[2]) _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+        }
+
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    }
+
+    if (op[0] & 5) throw op[1];
+    return {
+      value: op[0] ? op[1] : void 0,
+      done: true
+    };
+  }
+};
+
 var PlayingScene =
 /** @class */
 function (_super) {
   __extends(PlayingScene, _super);
 
-  function PlayingScene() {
+  function PlayingScene(engine) {
     var _this = _super.call(this) || this;
 
     _this.enemies = [];
@@ -707,6 +1010,24 @@ function (_super) {
       var bDown = bullet.getLimits()[1];
       var bRight = bullet.getLimits()[2];
       var bleft = bullet.getLimits()[3];
+      var eUp = enemie.getLimits()[0];
+      var eDown = enemie.getLimits()[1];
+      var eRight = enemie.getLimits()[2];
+      var eLeft = enemie.getLimits()[3]; //console.log(bleft, "<", eRight, "  ", bRight, ">", eLeft, "  ", bUp, " > ", eDown, "  ", bDown, " < ", eUp);
+
+      if (bleft < eRight && bRight > eLeft && bUp < eDown && bDown > eUp) {
+        console.log(true);
+        return true;
+      }
+
+      return false;
+    };
+
+    _this.colicionPlayer = function (enemie, player) {
+      var bUp = player.getLimits()[0];
+      var bDown = player.getLimits()[1];
+      var bRight = player.getLimits()[2];
+      var bleft = player.getLimits()[3];
       var eUp = enemie.getLimits()[0];
       var eDown = enemie.getLimits()[1];
       var eRight = enemie.getLimits()[2];
@@ -753,34 +1074,115 @@ function (_super) {
     _this.enter = function () {};
 
     _this.update = function () {
-      _this.player.update();
+      return __awaiter(_this, void 0, void 0, function () {
+        var context, index_3, element, _loop_1, this_1, index_4, index_5, element, bool, index_6, element, aux, index_7, index_8, element;
 
-      for (var index_3 = 0; index_3 < _this.bullets.length; index_3++) {
-        var element = _this.bullets[index_3];
-        element.update();
-      }
+        var _this = this;
 
-      _this.bullets = _this.bullets.filter(function (ele) {
-        if (ele.getPosY() != 0) {
-          return ele;
-        }
+        return __generator(this, function (_a) {
+          switch (_a.label) {
+            case 0:
+              context = _GameContext.default.context;
+              this.player.update();
+
+              for (index_3 = 0; index_3 < this.bullets.length; index_3++) {
+                element = this.bullets[index_3];
+                element.update();
+              }
+
+              this.bullets = this.bullets.filter(function (ele) {
+                if (ele.getPosY() != 0) {
+                  return ele;
+                }
+              });
+
+              _loop_1 = function _loop_1(index_4) {
+                var element = this_1.enemies[index_4];
+
+                if (element.getState()) {
+                  this_1.bullets = this_1.bullets.filter(function (bul) {
+                    if (!_this.colicion(element, bul)) {
+                      return bul;
+                    } else element.setState(false);
+                  });
+                }
+              };
+
+              this_1 = this;
+
+              for (index_4 = 0; index_4 < this.enemies.length; index_4++) {
+                _loop_1(index_4);
+              }
+
+              for (index_5 = 0; index_5 < this.enemies.length; index_5++) {
+                element = this.enemies[index_5];
+
+                if (!element.getState()) {
+                  _GameObject.default.velocityX += 0.002;
+                }
+              }
+
+              bool = false;
+              index_6 = 0;
+              _a.label = 1;
+
+            case 1:
+              if (!(index_6 < this.enemies.length)) return [3
+              /*break*/
+              , 4];
+              element = this.enemies[index_6];
+              return [4
+              /*yield*/
+              , element.getState()];
+
+            case 2:
+              aux = _a.sent();
+
+              if (!aux) {
+                bool = true;
+              } else {
+                bool = false;
+                return [3
+                /*break*/
+                , 4];
+              }
+
+              ;
+              _a.label = 3;
+
+            case 3:
+              index_6++;
+              return [3
+              /*break*/
+              , 1];
+
+            case 4:
+              if (bool) {
+                this.enemies = [];
+                this.numberOfEnemies += 10;
+                _GameObject.default.velocityX = _GameObject.default.lastVelocity;
+                this.bullets = [];
+
+                for (index_7 = 0; index_7 < this.numberOfEnemies; index_7++) {
+                  this.enemies.push(new _Enemies.default(index_7));
+                }
+              }
+
+              for (index_8 = 0; index_8 < this.enemies.length; index_8++) {
+                element = this.enemies[index_8];
+
+                if (element.getLimits()[1] >= context.canvas.height || this.colicionPlayer(element, this.player) && element.getState()) {
+                  console.log('hola');
+                  this.engine.changeScene(new _GameOverScene.default());
+                }
+              }
+
+              return [2
+              /*return*/
+              ];
+          }
+        });
       });
-
-      var _loop_1 = function _loop_1(index_4) {
-        var element = _this.enemies[index_4];
-
-        if (element.getState()) {
-          _this.bullets = _this.bullets.filter(function (bul) {
-            if (!_this.colicion(element, bul)) {
-              return bul;
-            } else element.setState(false);
-          });
-        }
-      };
-
-      for (var index_4 = 0; index_4 < _this.enemies.length; index_4++) {
-        _loop_1(index_4);
-      }
     };
 
     _this.keyUpHandler = function (event) {
@@ -802,14 +1204,35 @@ function (_super) {
     };
 
     _this.clickHandler = function (event) {
-      _this.bullets.push(new _Bullet.default(_this.player));
+      return __awaiter(_this, void 0, void 0, function () {
+        var audio;
+        return __generator(this, function (_a) {
+          switch (_a.label) {
+            case 0:
+              audio = document.createElement('audio');
+              audio.src = _pew.default;
+              return [4
+              /*yield*/
+              , audio.play()];
+
+            case 1:
+              _a.sent();
+
+              this.bullets.push(new _Bullet.default(this.player));
+              return [2
+              /*return*/
+              ];
+          }
+        });
+      });
     };
 
-    for (var index_5 = 0; index_5 < _this.numberOfEnemies; index_5++) {
-      _this.enemies.push(new _Enemies.default(index_5));
+    for (var index_9 = 0; index_9 < _this.numberOfEnemies; index_9++) {
+      _this.enemies.push(new _Enemies.default(index_9));
     }
 
     _this.player = new _Player.default();
+    _this.engine = engine;
     return _this;
   }
 
@@ -818,7 +1241,7 @@ function (_super) {
 
 var _default = PlayingScene;
 exports.default = _default;
-},{"./../Scene":"src/Scene.ts","../GameContext":"src/GameContext.ts","../Enemies":"src/Enemies.ts","./PauseScene":"src/Scenes/PauseScene.ts","./../index":"src/index.ts","./Player":"src/Scenes/Player.ts","../Bullet":"src/Bullet.ts"}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
+},{"./../Scene":"src/Scene.ts","../GameObject":"src/GameObject.ts","../GameContext":"src/GameContext.ts","../Enemies":"src/Enemies.ts","./PauseScene":"src/Scenes/PauseScene.ts","./../index":"src/index.ts","./Player":"src/Scenes/Player.ts","../Bullet":"src/Bullet.ts","./../../assets/pew.mp3":"assets/pew.mp3","./GameOverScene":"src/Scenes/GameOverScene.ts"}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
 module.exports = "/imageedit_2_7701798241.d43096d5.jpg";
 },{}],"src/Scenes/DificultyScene.ts":[function(require,module,exports) {
 "use strict";
@@ -1395,7 +1818,7 @@ function (_super) {
 
         case "Enter":
           if (_this.currentOption === 0) {
-            engine.changeScene(new _PlayingScene.default());
+            engine.changeScene(new _PlayingScene.default(engine));
           }
 
           if (_this.currentOption === 1) {
@@ -1528,6 +1951,147 @@ var _sound = _interopRequireDefault(require("./../assets/sound.mp3"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : new P(function (resolve) {
+        resolve(result.value);
+      }).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
+  var _ = {
+    label: 0,
+    sent: function sent() {
+      if (t[0] & 1) throw t[1];
+      return t[1];
+    },
+    trys: [],
+    ops: []
+  },
+      f,
+      y,
+      t,
+      g;
+  return g = {
+    next: verb(0),
+    "throw": verb(1),
+    "return": verb(2)
+  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
+    return this;
+  }), g;
+
+  function verb(n) {
+    return function (v) {
+      return step([n, v]);
+    };
+  }
+
+  function step(op) {
+    if (f) throw new TypeError("Generator is already executing.");
+
+    while (_) {
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+        if (y = 0, t) op = [op[0] & 2, t.value];
+
+        switch (op[0]) {
+          case 0:
+          case 1:
+            t = op;
+            break;
+
+          case 4:
+            _.label++;
+            return {
+              value: op[1],
+              done: false
+            };
+
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+
+          case 7:
+            op = _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+
+              _.ops.push(op);
+
+              break;
+            }
+
+            if (t[2]) _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+        }
+
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    }
+
+    if (op[0] & 5) throw op[1];
+    return {
+      value: op[0] ? op[1] : void 0,
+      done: true
+    };
+  }
+};
+
+var _this = void 0;
+
 //  Nota: No es necesario escribir código nuevo en este archivo.
 var sound = true;
 var music = document.createElement("audio");
@@ -1535,15 +2099,44 @@ music.src = _sound.default;
 music.loop = true;
 
 var changeSound = function changeSound(n) {
-  if (n === 1) {
-    music.play();
-    sound = true;
-  }
+  return __awaiter(_this, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+      switch (_a.label) {
+        case 0:
+          if (!(n === 1)) return [3
+          /*break*/
+          , 2];
+          return [4
+          /*yield*/
+          , music.play()];
 
-  if (n === 2) {
-    music.pause();
-    sound = false;
-  }
+        case 1:
+          _a.sent();
+
+          sound = true;
+          _a.label = 2;
+
+        case 2:
+          if (!(n === 2)) return [3
+          /*break*/
+          , 4];
+          return [4
+          /*yield*/
+          , music.pause()];
+
+        case 3:
+          _a.sent();
+
+          sound = false;
+          _a.label = 4;
+
+        case 4:
+          return [2
+          /*return*/
+          ];
+      }
+    });
+  });
 };
 
 var canvas = document.getElementById("game-area");
@@ -1595,7 +2188,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "37775" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "38731" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

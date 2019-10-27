@@ -11,6 +11,16 @@ class Player{
 private posX = 0;
 private speed = 200;
 private characterImage = new Image();
+private up : number;
+private down: number;
+private right: number;
+private left : number;
+
+
+public getLimits = () => {
+
+    return [this.up , this.down , this.right , this.left];
+}
 
 public moving(event:MouseEvent) {
   var xOffset = event.offsetX;
@@ -32,9 +42,17 @@ public moving(event:MouseEvent) {
     const { width, height } = context.canvas;
     this.posX = 
       (width - sWidth) / 2;
+      this.up = posY;
+      this.down = posY + sHeight
+      this.right = this.posX + sWidth;
+      this.left = this.posX
   }
   
   public update = () => {
+
+      this.down = posY + sHeight
+      this.right = this.posX + sWidth;
+      this.left = this.posX
   };
 
   public render = () => {

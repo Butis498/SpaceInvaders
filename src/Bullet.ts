@@ -5,7 +5,7 @@ import GameContext from './GameContext';
 
     private posX: number;
     private posY: number;
-    private width:number = 5;
+    private width:number = 3;
     private height:number = 25;
     private velocity: number =  - 5;
     private up : number;
@@ -16,7 +16,7 @@ import GameContext from './GameContext';
      constructor(player : Player) {
 
         this.posX = player.getPosition() + player.getWidth()/2;
-        this.posY = 400 * 0.75 + 5;
+        this.posY = 400 * 0.75 ;
         this.up = this.posY;
         this.down = this.posY + this.height;
         this.left = this.posX;

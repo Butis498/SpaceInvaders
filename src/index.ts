@@ -1,6 +1,7 @@
 import Engine from "./Engine";
 import GameContext from "./GameContext";
 import Music from "./../assets/sound.mp3"
+import { async } from 'q';
 
 //  Nota: No es necesario escribir código nuevo en este archivo.
 
@@ -11,13 +12,13 @@ music.src = Music;
 music.loop = true;
 
 
-let changeSound = (n: number) => {
+let changeSound = async(n: number) => {
     if (n === 1) {
-        music.play();
+        await music.play();
         sound = true;
     }
     if (n === 2) {
-        music.pause();
+        await music.pause();
         sound = false;
     }
 

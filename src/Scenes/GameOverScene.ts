@@ -3,6 +3,8 @@ import GameContext from './../GameContext';
 import GOIMG from './../../assets/10.jpg'
 import Engine from './../Engine';
 import MainMenuScene from './MainMenuScene';
+import PlayingScene from './PlayingScene';
+import GameObject from '../GameObject';
 
 
 class GameOverScene extends Scene {
@@ -35,7 +37,13 @@ class GameOverScene extends Scene {
             case "Enter":
                 
                 if (this.currentOption === 1) {
+                    GameObject.velocityX = GameObject.lastVelocity;
                     engine.changeScene(new MainMenuScene());
+                }
+
+                if (this.currentOption === 0) {
+                    GameObject.velocityX = GameObject.lastVelocity;
+                    engine.changeScene(new PlayingScene(engine));
                 }
 
 
