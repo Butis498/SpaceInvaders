@@ -13,12 +13,14 @@ import { async } from "q";
 import GameOverScene from "./GameOverScene";
 
 class PlayingScene extends Scene {
+    public score:number = 0;
 
     private enemies: Enemies[] = [];
     private numberOfEnemies: number = 60;
     private player: Player = null;
     private bullets: Bullet[] = [];
     private engine: Engine;
+    public finalScore:number= 0;
 
     constructor(engine: Engine) {
         super();
@@ -55,6 +57,8 @@ class PlayingScene extends Scene {
         if (bleft < eRight && bRight > eLeft && bUp < eDown && bDown > eUp) {
 
             console.log(true)
+             this.score += 10;
+
             return true
 
         }
@@ -138,7 +142,7 @@ class PlayingScene extends Scene {
         }
 
 
-
+        context.fillText(this.score.toString(), 10, 50);
 
     };
     public enter = () => {
@@ -229,7 +233,6 @@ class PlayingScene extends Scene {
             if (element.getLimits()[1] >= context.canvas.height || (this.colicionPlayer(element, this.player)&& element.getState())) {
 
                 console.log('hola');
-
                 this.engine.changeScene(new GameOverScene());
             }
 

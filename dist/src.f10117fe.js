@@ -140,7 +140,10 @@ exports.default = _default;
 },{}],"src/Time.ts":[function(require,module,exports) {
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 
 var Time =
 /** @class */
@@ -160,7 +163,8 @@ function () {
   return Time;
 }();
 
-exports["default"] = Time;
+var _default = Time;
+exports.default = _default;
 },{}],"src/Scene.ts":[function(require,module,exports) {
 "use strict";
 
@@ -780,7 +784,7 @@ function (_super) {
           context.strokeText(_this.options[i], _this.width / 2, _this.height / 2 + i * 30 + 130);
         }
 
-        context.fillText(_this.options[i], _this.width / 2, _this.height / 2 + i * 30 + 130);
+        context.fillText(_this.options[i], _this.width / 2, _this.height / 2 + i * 30 + 130); //context.fillText(play.score.toString(), 150, 150);
       }
 
       context.closePath();
@@ -1000,10 +1004,12 @@ function (_super) {
   function PlayingScene(engine) {
     var _this = _super.call(this) || this;
 
+    _this.score = 0;
     _this.enemies = [];
     _this.numberOfEnemies = 60;
     _this.player = null;
     _this.bullets = [];
+    _this.finalScore = 0;
 
     _this.colicion = function (enemie, bullet) {
       var bUp = bullet.getLimits()[0];
@@ -1017,6 +1023,7 @@ function (_super) {
 
       if (bleft < eRight && bRight > eLeft && bUp < eDown && bDown > eUp) {
         console.log(true);
+        _this.score += 10;
         return true;
       }
 
@@ -1069,6 +1076,8 @@ function (_super) {
         var element = _this.bullets[index_2];
         element.render();
       }
+
+      context.fillText(_this.score.toString(), 10, 50);
     };
 
     _this.enter = function () {};
@@ -2188,7 +2197,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "38731" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51171" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
