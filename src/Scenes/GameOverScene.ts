@@ -90,10 +90,12 @@ class GameOverScene extends Scene {
                 context.strokeText(this.options[i],this.width / 2, this.height / 2 + i * 30 + 130)
             }
             context.fillText(this.options[i], this.width / 2, this.height / 2 + i * 30 + 130)
+            //context.fillText(play.score.toString(), 150, 150);
         }
         context.closePath();
         context.restore();
-
+        
+      
     }
 
     public update = () =>{
