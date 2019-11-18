@@ -12,6 +12,7 @@ class SoundScene extends Scene {
     private currentOption : number = 1;
     private width = GameContext.context.canvas.width;
     private height = GameContext.context.canvas.height;
+    sceneTypeN = 1;
 
     public enter = () =>{
 
@@ -48,7 +49,7 @@ class SoundScene extends Scene {
                 }
 
                 if (this.currentOption === 2 || this.currentOption === 1) {
-                    index.changeSound(this.currentOption);
+                    index.changeSound(this.currentOption , this);
                     engine.changeScene(new SettingsScene());
                 }
                 
@@ -61,6 +62,14 @@ class SoundScene extends Scene {
                 break;
         }
     }
+
+    public  sceneType = () =>{
+
+
+        return this.sceneTypeN;
+    }
+
+
 
     public keyUpHandler = (event : KeyboardEvent) =>{
         const {key} = event;

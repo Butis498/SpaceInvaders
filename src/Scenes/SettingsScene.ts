@@ -12,10 +12,19 @@ class SettingsScene extends Scene {
     private currentOption : number = 1;
     private width = GameContext.context.canvas.width;
     private height = GameContext.context.canvas.height;
+    sceneTypeN = 1;
 
     public enter = () =>{
 
     }
+
+    public  sceneType = () =>{
+
+
+        return this.sceneTypeN;
+    }
+
+
 
     public keyDownHandler = (event: KeyboardEvent , engine :Engine) => {
         const {key} = event;

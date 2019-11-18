@@ -14,7 +14,8 @@ class MainMenuScene extends Scene {
     private width = GameContext.context.canvas.width;
     private height = GameContext.context.canvas.height;
     private image = new Image;
-    
+    sceneTypeN = 1;
+
 
     public render = () => {
 
@@ -91,6 +92,14 @@ class MainMenuScene extends Scene {
 
     };
     public enter = () => { };
+
+    public  sceneType = () =>{
+
+
+        return this.sceneTypeN;
+    }
+
+
 
 }
 

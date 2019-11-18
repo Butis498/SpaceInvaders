@@ -14,10 +14,19 @@ class GameOverScene extends Scene {
     private width = GameContext.context.canvas.width;
     private height = GameContext.context.canvas.height;
     private image = new Image;
+    sceneTypeN = 1;
 
     public enter = () =>{
 
     }
+
+    public  sceneType = () =>{
+
+
+        return this.sceneTypeN;
+    }
+
+
 
     public keyDownHandler = (event: KeyboardEvent , engine :Engine) => {
         const {key} = event;

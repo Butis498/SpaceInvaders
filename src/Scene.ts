@@ -1,6 +1,6 @@
 import Engine from './Engine';
 abstract class Scene {
-
+    public abstract sceneTypeN:number
     public abstract render = () => {};
     public abstract update = () => {};
     public abstract enter = () => {};
@@ -14,6 +14,12 @@ abstract class Scene {
     }
     public clickHandler = (event:MouseEvent)=> {
         
+    }
+
+
+    public abstract sceneType=() =>{
+        
+        return this.sceneTypeN
     }
 
 

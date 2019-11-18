@@ -140,10 +140,7 @@ exports.default = _default;
 },{}],"src/Time.ts":[function(require,module,exports) {
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
+exports.__esModule = true;
 
 var Time =
 /** @class */
@@ -163,8 +160,7 @@ function () {
   return Time;
 }();
 
-var _default = Time;
-exports.default = _default;
+exports["default"] = Time;
 },{}],"src/Scene.ts":[function(require,module,exports) {
 "use strict";
 
@@ -177,6 +173,8 @@ var Scene =
 /** @class */
 function () {
   function Scene() {
+    var _this = this;
+
     this.render = function () {};
 
     this.update = function () {};
@@ -190,6 +188,10 @@ function () {
     this.mouseHandler = function (event) {};
 
     this.clickHandler = function (event) {};
+
+    this.sceneType = function () {
+      return _this.sceneTypeN;
+    };
   }
 
   return Scene;
@@ -418,6 +420,7 @@ function (_super) {
     _this.currentOption = 1;
     _this.width = _GameContext.default.context.canvas.width;
     _this.height = _GameContext.default.context.canvas.height;
+    _this.sceneTypeN = 1;
 
     _this.enter = function () {};
 
@@ -448,7 +451,7 @@ function (_super) {
             delete _this.scene;
 
             if (_this.sound) {
-              _index.default.changeSound(1);
+              _index.default.changeSound(1, _this);
             }
 
             engine.changeScene(new _MainMenuScene.default());
@@ -456,7 +459,7 @@ function (_super) {
 
           if (_this.currentOption === 2) {
             if (_this.sound) {
-              _index.default.changeSound(1);
+              _index.default.changeSound(1, _this);
             }
 
             engine.changeScene(_this.scene);
@@ -471,6 +474,10 @@ function (_super) {
 
     _this.keyUpHandler = function (event) {
       var key = event.key;
+    };
+
+    _this.sceneType = function () {
+      return _this.sceneTypeN;
     };
 
     _this.render = function () {
@@ -724,8 +731,13 @@ function (_super) {
     _this.width = _GameContext.default.context.canvas.width;
     _this.height = _GameContext.default.context.canvas.height;
     _this.image = new Image();
+    _this.sceneTypeN = 1;
 
     _this.enter = function () {};
+
+    _this.sceneType = function () {
+      return _this.sceneTypeN;
+    };
 
     _this.keyDownHandler = function (event, engine) {
       var key = event.key;
@@ -801,7 +813,9 @@ function (_super) {
 
 var _default = GameOverScene;
 exports.default = _default;
-},{"./../Scene":"src/Scene.ts","./../GameContext":"src/GameContext.ts","./../../assets/10.jpg":"assets/10.jpg","./MainMenuScene":"src/Scenes/MainMenuScene.ts","./PlayingScene":"src/Scenes/PlayingScene.ts","../GameObject":"src/GameObject.ts"}],"src/Scenes/PlayingScene.ts":[function(require,module,exports) {
+},{"./../Scene":"src/Scene.ts","./../GameContext":"src/GameContext.ts","./../../assets/10.jpg":"assets/10.jpg","./MainMenuScene":"src/Scenes/MainMenuScene.ts","./PlayingScene":"src/Scenes/PlayingScene.ts","../GameObject":"src/GameObject.ts"}],"assets/explosion.mp3":[function(require,module,exports) {
+module.exports = "/explosion.ae148275.mp3";
+},{}],"src/Scenes/PlayingScene.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -828,6 +842,8 @@ var _Bullet = _interopRequireDefault(require("../Bullet"));
 var _pew = _interopRequireDefault(require("./../../assets/pew.mp3"));
 
 var _GameOverScene = _interopRequireDefault(require("./GameOverScene"));
+
+var _explosion = _interopRequireDefault(require("../../assets/explosion.mp3"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1010,6 +1026,7 @@ function (_super) {
     _this.player = null;
     _this.bullets = [];
     _this.finalScore = 0;
+    _this.sceneTypeN = 0;
 
     _this.colicion = function (enemie, bullet) {
       var bUp = bullet.getLimits()[0];
@@ -1112,7 +1129,12 @@ function (_super) {
                   this_1.bullets = this_1.bullets.filter(function (bul) {
                     if (!_this.colicion(element, bul)) {
                       return bul;
-                    } else element.setState(false);
+                    } else {
+                      var soundM = document.createElement('audio');
+                      soundM.src = _explosion.default;
+                      soundM.play();
+                      element.setState(false);
+                    }
                   });
                 }
               };
@@ -1127,7 +1149,7 @@ function (_super) {
                 element = this.enemies[index_5];
 
                 if (!element.getState()) {
-                  _GameObject.default.velocityX += 0.002;
+                  _GameObject.default.velocityX += 0.001;
                 }
               }
 
@@ -1204,7 +1226,7 @@ function (_super) {
       if (key === 'p') {
         engine.changeScene(new _PauseScene.default(_this, _index.default.getSoundState()));
 
-        _index.default.changeSound(2);
+        _index.default.changeSound(2, _this);
       }
     };
 
@@ -1236,12 +1258,21 @@ function (_super) {
       });
     };
 
+    _this.sceneType = function () {
+      return _this.sceneTypeN;
+    };
+
     for (var index_9 = 0; index_9 < _this.numberOfEnemies; index_9++) {
       _this.enemies.push(new _Enemies.default(index_9));
     }
 
     _this.player = new _Player.default();
     _this.engine = engine;
+
+    if (_index.default.getSoundState()) {
+      _index.default.changeSound(1, _this);
+    }
+
     return _this;
   }
 
@@ -1250,7 +1281,7 @@ function (_super) {
 
 var _default = PlayingScene;
 exports.default = _default;
-},{"./../Scene":"src/Scene.ts","../GameObject":"src/GameObject.ts","../GameContext":"src/GameContext.ts","../Enemies":"src/Enemies.ts","./PauseScene":"src/Scenes/PauseScene.ts","./../index":"src/index.ts","./Player":"src/Scenes/Player.ts","../Bullet":"src/Bullet.ts","./../../assets/pew.mp3":"assets/pew.mp3","./GameOverScene":"src/Scenes/GameOverScene.ts"}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
+},{"./../Scene":"src/Scene.ts","../GameObject":"src/GameObject.ts","../GameContext":"src/GameContext.ts","../Enemies":"src/Enemies.ts","./PauseScene":"src/Scenes/PauseScene.ts","./../index":"src/index.ts","./Player":"src/Scenes/Player.ts","../Bullet":"src/Bullet.ts","./../../assets/pew.mp3":"assets/pew.mp3","./GameOverScene":"src/Scenes/GameOverScene.ts","../../assets/explosion.mp3":"assets/explosion.mp3"}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
 module.exports = "/imageedit_2_7701798241.d43096d5.jpg";
 },{}],"src/Scenes/DificultyScene.ts":[function(require,module,exports) {
 "use strict";
@@ -1313,6 +1344,7 @@ function (_super) {
     _this.width = _GameContext.default.context.canvas.width;
     _this.height = _GameContext.default.context.canvas.height;
     _this.enemies = _Enemies.default;
+    _this.sceneTypeN = 1;
 
     _this.enter = function () {};
 
@@ -1402,6 +1434,10 @@ function (_super) {
 
     _this.update = function () {};
 
+    _this.sceneType = function () {
+      return _this.sceneTypeN;
+    };
+
     return _this;
   }
 
@@ -1466,6 +1502,7 @@ function (_super) {
     _this.currentOption = 1;
     _this.width = _GameContext.default.context.canvas.width;
     _this.height = _GameContext.default.context.canvas.height;
+    _this.sceneTypeN = 1;
 
     _this.enter = function () {};
 
@@ -1497,7 +1534,7 @@ function (_super) {
           }
 
           if (_this.currentOption === 2 || _this.currentOption === 1) {
-            _index.default.changeSound(_this.currentOption);
+            _index.default.changeSound(_this.currentOption, _this);
 
             engine.changeScene(new _SettingsScene.default());
           }
@@ -1507,6 +1544,10 @@ function (_super) {
         default:
           break;
       }
+    };
+
+    _this.sceneType = function () {
+      return _this.sceneTypeN;
     };
 
     _this.keyUpHandler = function (event) {
@@ -1623,8 +1664,13 @@ function (_super) {
     _this.currentOption = 1;
     _this.width = _GameContext.default.context.canvas.width;
     _this.height = _GameContext.default.context.canvas.height;
+    _this.sceneTypeN = 1;
 
     _this.enter = function () {};
+
+    _this.sceneType = function () {
+      return _this.sceneTypeN;
+    };
 
     _this.keyDownHandler = function (event, engine) {
       var key = event.key;
@@ -1778,6 +1824,7 @@ function (_super) {
     _this.width = _GameContext.default.context.canvas.width;
     _this.height = _GameContext.default.context.canvas.height;
     _this.image = new Image();
+    _this.sceneTypeN = 1;
 
     _this.render = function () {
       _this.image.src = _imageedit_2_.default;
@@ -1842,6 +1889,10 @@ function (_super) {
     };
 
     _this.enter = function () {};
+
+    _this.sceneType = function () {
+      return _this.sceneTypeN;
+    };
 
     return _this;
   }
@@ -1944,6 +1995,8 @@ var _default = Engine;
 exports.default = _default;
 },{"./GameContext":"src/GameContext.ts","./Time":"src/Time.ts","./Scenes/MainMenuScene":"src/Scenes/MainMenuScene.ts"}],"assets/sound.mp3":[function(require,module,exports) {
 module.exports = "/sound.e6fffd27.mp3";
+},{}],"assets/haloMenu.mp3":[function(require,module,exports) {
+module.exports = "/haloMenu.948e5572.mp3";
 },{}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
@@ -1957,6 +2010,10 @@ var _Engine = _interopRequireDefault(require("./Engine"));
 var _GameContext = _interopRequireDefault(require("./GameContext"));
 
 var _sound = _interopRequireDefault(require("./../assets/sound.mp3"));
+
+var _haloMenu = _interopRequireDefault(require("./../assets/haloMenu.mp3"));
+
+var _MainMenuScene = _interopRequireDefault(require("./Scenes/MainMenuScene"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2103,43 +2160,97 @@ var _this = void 0;
 
 //  Nota: No es necesario escribir código nuevo en este archivo.
 var sound = true;
+var menuSound = true;
 var music = document.createElement("audio");
 music.src = _sound.default;
 music.loop = true;
+var MenuSound = document.createElement('audio');
+MenuSound.src = _haloMenu.default;
+MenuSound.loop = true;
 
-var changeSound = function changeSound(n) {
+var changeSound = function changeSound(n, scene) {
   return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
       switch (_a.label) {
         case 0:
           if (!(n === 1)) return [3
           /*break*/
-          , 2];
+          , 7];
+          if (!(scene.sceneType() === 1)) return [3
+          /*break*/
+          , 3];
           return [4
           /*yield*/
-          , music.play()];
+          , MenuSound.play()];
 
         case 1:
           _a.sent();
 
-          sound = true;
-          _a.label = 2;
-
-        case 2:
-          if (!(n === 2)) return [3
-          /*break*/
-          , 4];
           return [4
           /*yield*/
           , music.pause()];
 
-        case 3:
+        case 2:
           _a.sent();
 
-          sound = false;
-          _a.label = 4;
+          return [3
+          /*break*/
+          , 6];
+
+        case 3:
+          return [4
+          /*yield*/
+          , music.play()];
 
         case 4:
+          _a.sent();
+
+          return [4
+          /*yield*/
+          , MenuSound.pause()];
+
+        case 5:
+          _a.sent();
+
+          _a.label = 6;
+
+        case 6:
+          sound = true;
+          _a.label = 7;
+
+        case 7:
+          if (!(n === 2)) return [3
+          /*break*/
+          , 12];
+          if (!(scene.sceneType() === 1)) return [3
+          /*break*/
+          , 9];
+          return [4
+          /*yield*/
+          , MenuSound.pause()];
+
+        case 8:
+          _a.sent();
+
+          return [3
+          /*break*/
+          , 11];
+
+        case 9:
+          return [4
+          /*yield*/
+          , music.pause()];
+
+        case 10:
+          _a.sent();
+
+          _a.label = 11;
+
+        case 11:
+          sound = false;
+          _a.label = 12;
+
+        case 12:
           return [2
           /*return*/
           ];
@@ -2152,7 +2263,7 @@ var canvas = document.getElementById("game-area");
 var context = canvas.getContext("2d");
 _GameContext.default.context = context;
 var engine = new _Engine.default();
-changeSound(1);
+changeSound(1, new _MainMenuScene.default());
 
 var getSoundState = function getSoundState() {
   return sound;
@@ -2169,7 +2280,7 @@ var _default = {
   getSoundState: getSoundState
 };
 exports.default = _default;
-},{"./Engine":"src/Engine.ts","./GameContext":"src/GameContext.ts","./../assets/sound.mp3":"assets/sound.mp3"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./Engine":"src/Engine.ts","./GameContext":"src/GameContext.ts","./../assets/sound.mp3":"assets/sound.mp3","./../assets/haloMenu.mp3":"assets/haloMenu.mp3","./Scenes/MainMenuScene":"src/Scenes/MainMenuScene.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2197,7 +2308,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51171" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42037" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

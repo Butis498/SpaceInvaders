@@ -14,7 +14,8 @@ class PauseScene extends Scene {
     private height = GameContext.context.canvas.height;
     private scene: Scene;
     private sound: boolean;
-    
+    sceneTypeN = 1;
+
 
     constructor(scene: Scene  , sound : boolean) {
         super();
@@ -57,7 +58,7 @@ class PauseScene extends Scene {
 
                     delete this.scene;
                     if (this.sound) {
-                        index.changeSound(1);
+                        index.changeSound(1 , this);
                     }
                     engine.changeScene(new MainMenuScene());
                 }
@@ -67,7 +68,7 @@ class PauseScene extends Scene {
                 if (this.currentOption === 2) {
 
                     if (this.sound) {
-                        index.changeSound(1);
+                        index.changeSound(1 , this);
                     }
                     engine.changeScene(this.scene);
                 }
@@ -83,6 +84,12 @@ class PauseScene extends Scene {
     public keyUpHandler = (event: KeyboardEvent) => {
         const { key } = event;
 
+    }
+
+    public  sceneType = () =>{
+
+
+        return this.sceneTypeN;
     }
 
     public render = () => {

@@ -15,6 +15,7 @@ class DIficultyScene extends Scene {
     private height = GameContext.context.canvas.height;
     private enemies = Enemies;
 
+    sceneTypeN = 1;
     public enter = () =>{
 
     }
@@ -127,6 +128,13 @@ class DIficultyScene extends Scene {
     public update = () =>{
 
     }
+
+    public  sceneType = () =>{
+
+
+        return this.sceneTypeN;
+    }
+
 }
 
 export default DIficultyScene;

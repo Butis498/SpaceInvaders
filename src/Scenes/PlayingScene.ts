@@ -11,16 +11,20 @@ import Bullet from '../Bullet';
 import pew from './../../assets/pew.mp3'
 import { async } from "q";
 import GameOverScene from "./GameOverScene";
+import sound from '../../assets/explosion.mp3'
 
 class PlayingScene extends Scene {
-    public score:number = 0;
+    public score: number = 0;
 
     private enemies: Enemies[] = [];
     private numberOfEnemies: number = 60;
     private player: Player = null;
     private bullets: Bullet[] = [];
     private engine: Engine;
-    public finalScore:number= 0;
+    public finalScore: number = 0;
+
+    sceneTypeN = 0;
+
 
     constructor(engine: Engine) {
         super();
@@ -31,6 +35,13 @@ class PlayingScene extends Scene {
 
         this.player = new Player();
         this.engine = engine
+
+        if (index.getSoundState()) {
+            index.changeSound(1, this);
+        }
+
+
+
 
     }
 
@@ -57,7 +68,7 @@ class PlayingScene extends Scene {
         if (bleft < eRight && bRight > eLeft && bUp < eDown && bDown > eUp) {
 
             console.log(true)
-             this.score += 10;
+            this.score += 10;
 
             return true
 
@@ -179,7 +190,15 @@ class PlayingScene extends Scene {
 
                         return bul;
 
-                    } else element.setState(false);
+                    } else {
+
+                        let soundM = document.createElement('audio');
+                        soundM.src =  sound;
+                        soundM.play();
+                        element.setState(false);
+
+
+                    }
                 });
 
             }
@@ -191,7 +210,7 @@ class PlayingScene extends Scene {
 
             if (!element.getState()) {
 
-                GameObject.velocityX += 0.002;
+                GameObject.velocityX += 0.001;
             }
         }
         let bool = false;
@@ -230,7 +249,7 @@ class PlayingScene extends Scene {
         for (let index = 0; index < this.enemies.length; index++) {
             const element = this.enemies[index];
 
-            if (element.getLimits()[1] >= context.canvas.height || (this.colicionPlayer(element, this.player)&& element.getState())) {
+            if (element.getLimits()[1] >= context.canvas.height || (this.colicionPlayer(element, this.player) && element.getState())) {
 
                 console.log('hola');
                 this.engine.changeScene(new GameOverScene());
@@ -253,7 +272,7 @@ class PlayingScene extends Scene {
 
 
             engine.changeScene(new PauseScene(this, index.getSoundState()));
-            index.changeSound(2);
+            index.changeSound(2, this);
         }
 
     };
@@ -275,6 +294,14 @@ class PlayingScene extends Scene {
 
 
     }
+
+
+    public sceneType = () => {
+
+
+        return this.sceneTypeN;
+    }
+
 
 }
 
