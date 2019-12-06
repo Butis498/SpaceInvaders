@@ -9,9 +9,10 @@ import index from './../index';
 import Player from './Player';
 import Bullet from '../Bullet';
 import pew from './../../assets/pew.mp3'
-import { async } from "q";
 import GameOverScene from "./GameOverScene";
 import sound from '../../assets/explosion.mp3'
+import nextLevel from '../../assets/next.mp3'
+
 
 class PlayingScene extends Scene {
     public score: number = 0;
@@ -234,6 +235,12 @@ class PlayingScene extends Scene {
 
         if (bool) {
             this.enemies = [];
+            let nextLevelSound  = document.createElement('audio');
+            nextLevelSound.src = nextLevel;
+            
+            if (index.getSoundState() ) {
+                nextLevelSound.play();
+            }
             this.numberOfEnemies += 10;
             GameObject.velocityX = GameObject.lastVelocity;
             this.bullets = []
@@ -246,12 +253,12 @@ class PlayingScene extends Scene {
         }
 
 
-        for (let index = 0; index < this.enemies.length; index++) {
-            const element = this.enemies[index];
+        for (let inde = 0; inde < this.enemies.length; inde++) {
+            const element = this.enemies[inde];
 
             if (element.getLimits()[1] >= context.canvas.height || (this.colicionPlayer(element, this.player) && element.getState())) {
 
-                console.log('hola');
+
                 this.engine.changeScene(new GameOverScene());
             }
 
