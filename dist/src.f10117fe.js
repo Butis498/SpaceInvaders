@@ -140,7 +140,10 @@ exports.default = _default;
 },{}],"src/Time.ts":[function(require,module,exports) {
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 
 var Time =
 /** @class */
@@ -160,7 +163,8 @@ function () {
   return Time;
 }();
 
-exports["default"] = Time;
+var _default = Time;
+exports.default = _default;
 },{}],"src/Scene.ts":[function(require,module,exports) {
 "use strict";
 
@@ -815,6 +819,10 @@ var _default = GameOverScene;
 exports.default = _default;
 },{"./../Scene":"src/Scene.ts","./../GameContext":"src/GameContext.ts","./../../assets/10.jpg":"assets/10.jpg","./MainMenuScene":"src/Scenes/MainMenuScene.ts","./PlayingScene":"src/Scenes/PlayingScene.ts","../GameObject":"src/GameObject.ts"}],"assets/explosion.mp3":[function(require,module,exports) {
 module.exports = "/explosion.ae148275.mp3";
+},{}],"assets/next.mp3":[function(require,module,exports) {
+module.exports = "/next.3b9547c1.mp3";
+},{}],"assets/Game-over-sound.mp3":[function(require,module,exports) {
+module.exports = "/Game-over-sound.aaa7d508.mp3";
 },{}],"src/Scenes/PlayingScene.ts":[function(require,module,exports) {
 "use strict";
 
@@ -844,6 +852,10 @@ var _pew = _interopRequireDefault(require("./../../assets/pew.mp3"));
 var _GameOverScene = _interopRequireDefault(require("./GameOverScene"));
 
 var _explosion = _interopRequireDefault(require("../../assets/explosion.mp3"));
+
+var _next = _interopRequireDefault(require("../../assets/next.mp3"));
+
+var _GameOverSound = _interopRequireDefault(require("../../assets/Game-over-sound.mp3"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1101,7 +1113,7 @@ function (_super) {
 
     _this.update = function () {
       return __awaiter(_this, void 0, void 0, function () {
-        var context, index_3, element, _loop_1, this_1, index_4, index_5, element, bool, index_6, element, aux, index_7, index_8, element;
+        var context, index_3, element, _loop_1, this_1, index_4, index_5, element, bool, index_6, element, aux, nextLevelSound, index_7, inde, element, GGSound;
 
         var _this = this;
 
@@ -1190,6 +1202,13 @@ function (_super) {
             case 4:
               if (bool) {
                 this.enemies = [];
+                nextLevelSound = document.createElement('audio');
+                nextLevelSound.src = _next.default;
+
+                if (_index.default.getSoundState()) {
+                  nextLevelSound.play();
+                }
+
                 this.numberOfEnemies += 10;
                 _GameObject.default.velocityX = _GameObject.default.lastVelocity;
                 this.bullets = [];
@@ -1199,11 +1218,17 @@ function (_super) {
                 }
               }
 
-              for (index_8 = 0; index_8 < this.enemies.length; index_8++) {
-                element = this.enemies[index_8];
+              for (inde = 0; inde < this.enemies.length; inde++) {
+                element = this.enemies[inde];
 
                 if (element.getLimits()[1] >= context.canvas.height || this.colicionPlayer(element, this.player) && element.getState()) {
-                  console.log('hola');
+                  GGSound = document.createElement('audio');
+                  GGSound.src = _GameOverSound.default;
+
+                  if (_index.default.getSoundState()) {
+                    GGSound.play();
+                  }
+
                   this.engine.changeScene(new _GameOverScene.default());
                 }
               }
@@ -1262,8 +1287,8 @@ function (_super) {
       return _this.sceneTypeN;
     };
 
-    for (var index_9 = 0; index_9 < _this.numberOfEnemies; index_9++) {
-      _this.enemies.push(new _Enemies.default(index_9));
+    for (var index_8 = 0; index_8 < _this.numberOfEnemies; index_8++) {
+      _this.enemies.push(new _Enemies.default(index_8));
     }
 
     _this.player = new _Player.default();
@@ -1281,7 +1306,7 @@ function (_super) {
 
 var _default = PlayingScene;
 exports.default = _default;
-},{"./../Scene":"src/Scene.ts","../GameObject":"src/GameObject.ts","../GameContext":"src/GameContext.ts","../Enemies":"src/Enemies.ts","./PauseScene":"src/Scenes/PauseScene.ts","./../index":"src/index.ts","./Player":"src/Scenes/Player.ts","../Bullet":"src/Bullet.ts","./../../assets/pew.mp3":"assets/pew.mp3","./GameOverScene":"src/Scenes/GameOverScene.ts","../../assets/explosion.mp3":"assets/explosion.mp3"}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
+},{"./../Scene":"src/Scene.ts","../GameObject":"src/GameObject.ts","../GameContext":"src/GameContext.ts","../Enemies":"src/Enemies.ts","./PauseScene":"src/Scenes/PauseScene.ts","./../index":"src/index.ts","./Player":"src/Scenes/Player.ts","../Bullet":"src/Bullet.ts","./../../assets/pew.mp3":"assets/pew.mp3","./GameOverScene":"src/Scenes/GameOverScene.ts","../../assets/explosion.mp3":"assets/explosion.mp3","../../assets/next.mp3":"assets/next.mp3","../../assets/Game-over-sound.mp3":"assets/Game-over-sound.mp3"}],"assets/imageedit_2_7701798241.jpg":[function(require,module,exports) {
 module.exports = "/imageedit_2_7701798241.d43096d5.jpg";
 },{}],"src/Scenes/DificultyScene.ts":[function(require,module,exports) {
 "use strict";
@@ -2308,7 +2333,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42037" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65093" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

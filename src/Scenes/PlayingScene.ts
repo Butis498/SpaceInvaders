@@ -12,6 +12,7 @@ import pew from './../../assets/pew.mp3'
 import GameOverScene from "./GameOverScene";
 import sound from '../../assets/explosion.mp3'
 import nextLevel from '../../assets/next.mp3'
+import GG from '../../assets/Game-over-sound.mp3'
 
 
 class PlayingScene extends Scene {
@@ -258,6 +259,12 @@ class PlayingScene extends Scene {
 
             if (element.getLimits()[1] >= context.canvas.height || (this.colicionPlayer(element, this.player) && element.getState())) {
 
+                let GGSound  = document.createElement('audio');
+                GGSound.src = GG;
+                
+                if (index.getSoundState() ) {
+                    GGSound.play();
+                }
 
                 this.engine.changeScene(new GameOverScene());
             }
